@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -17,10 +19,20 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    protected $table = 'users';
+    protected $primaryKey = 'id_user';
+    // public $timestamps = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'name',
+        'id_user',
+        'username',
+        'nama',
         'email',
         'password',
+        'role',
+        'img'
     ];
 
     /**
@@ -40,6 +52,25 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
+
+    public static function id($route)
+    {
+        if ($route === 'register') {
+            $prefix = 'C';
+        } else {
+            $prefix = 'A';
+        }
+    
+        $kode = DB::table('users')->where('id_user', 'LIKE', $prefix . '%')->max('id_user');
+        $kode = str_replace($prefix, '', $kode);
+        $kode = (int) $kode + 1;
+        $incrementKode = $kode;
+    
+        // $addNol = ($incrementKode < 10) ? '0' : '';
+    
+        // $kodeBaru = $prefix . $addNol . $incrementKode;
+        $kodeBaru = $prefix . $incrementKode;
+        return $kodeBaru;
+    }
 }
