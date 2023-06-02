@@ -29,10 +29,10 @@ Route::prefix('admin')->group(function () {
     // Kelola User
     Route::get('/kelola-user', function () {
         return view('admin.kelola-user');
-    });
+    })->name('kelola-user');
     Route::resource('/kelola-user', UserController::class);
-    Route::put('/kelola-user/{kelola-user}', [UserController::class, 'ubahPassword'])->name('kelola-user.ubahPassword')->middleware('auth');
-    // Route::put('/profile/{kelola-user}', [UserController::class, 'profile'])->name('kelola-user.profile')->middleware('auth');
+    Route::put('/password/{kelola_user}', [UserController::class, 'ubahPassword'])->name('ubah-password')->middleware('auth');
+    Route::put('/profile/{kelola_user}', [UserController::class, 'ubahProfile'])->name('ubah-profile')->middleware('auth');
     // END
 
     // Kelola Kategori

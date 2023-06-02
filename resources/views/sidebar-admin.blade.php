@@ -16,7 +16,7 @@
             </a>
             <ul id="user-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="kelola-user">
+                    <a href="{{ route('kelola-user.index') }}">
                         <i class="bi bi-circle"></i><span>Data User</span>
                     </a>
                 </li>

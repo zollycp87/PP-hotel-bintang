@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -80,13 +81,39 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if ($request->has('profileForm')) {
-            dd("Zolly");
-        } else if($request->has('passForm')){
-            dd("Zolllllllyyyy");
-        } else{
-            dd('form tidak ditemukan');
+
+    }
+
+    public function ubahPassword (Request $request, $id){
+
+        $request->validate([
+            'current-password' => 'required',
+            'new-password' => 'required|min:8',
+            'confirm-password' => 'required|same:new-password',
+        ],[
+            'current-password.required' => 'Lengkapi inputan',
+            'new-password.required' => 'Lengkapi inputan',
+            'confirm-password.required' => 'Lengkapi inputan',
+            'new-password.min' => 'Password minimum 8 karakter',
+            'confirm-password.same' => 'Password tidak sama',
+        ]);
+
+        $user = User::where('id_user',Auth::user()->id_user)->first();
+        // dd($user);
+        // Memeriksa apakah password saat ini sesuai dengan yang diberikan
+        if (!Hash::check($request->input('current-password'), $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Password saat ini tidak valid.']);
         }
+
+        // Memperbarui password pengguna
+        $user->password = Hash::make($request->input('new-password'));
+        $user->update();
+
+        return redirect()->back()->with('success', 'Password berhasil diperbarui.');
+    }
+
+    public function ubahProfile (Request $request, $id){
+        dd('hai Profile');
     }
 
     /**

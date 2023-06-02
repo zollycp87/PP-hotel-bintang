@@ -54,8 +54,8 @@
                     <br>
                     @include('komponen.pesan')
                     <!-- Profile Edit Form -->
-                    <form action="{{ route('kelola-user.update', $data->id_user) }}" method="post" class="row g-3"
-                        enctype="multipart/form-data" id="profileForm">
+                    <form action="{{ route('ubah-profile', $data->id_user) }}" method="post" class="row g-3"
+                        enctype="multipart/form-data" id="profileForm" name="profileForm">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -108,12 +108,13 @@
         <div class="col-xl-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Mengubah Password</h5>
-                    <br>
-                    @include('komponen.pesan')
+                    <div class="mb-4">
+                        <h5 class="card-title">Mengubah Password</h5>
+                        @include('komponen.pesan')
+                    </div>
                     <!-- Profile Edit Form -->
-                    <form action="{{ route('kelola-user.update', $data->id_user) }}" method="post" class="row g-3"
-                        enctype="multipart/form-data" id="passForm">
+                    <form action="{{ route('ubah-password', $data->id_user) }}" method="post" class="row g-3"
+                        enctype="multipart/form-data" id="passForm" name="passForm">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -126,18 +127,18 @@
                                 </div>
 
                                 <div class="col-12 mb-2">
-                                    <label for="oldpassword" class="form-floating">Password sekarang</label>
-                                    <input type="text" class="form-control" id="oldpassword" name="oldpassword"
+                                    <label for="current-password" class="form-floating">Password sekarang</label>
+                                    <input type="text" class="form-control" id="current-password" name="current-password"
                                         value="">
                                 </div>
                                 <div class="col-12 mb-2">
-                                    <label for="password" class="form-floating">Password Baru</label>
-                                    <input type="text" class="form-control" id="password" name="password"
+                                    <label for="new-password" class="form-floating">Password Baru</label>
+                                    <input type="text" class="form-control" id="new-password" name="new-password"
                                         value="">
                                 </div>
                                 <div class="col-12 mb-2">
-                                    <label for="vpassword" class="form-floating">Konfirmasi Password Baru</label>
-                                    <input type="text" class="form-control" id="vpassword" name="vpassword"
+                                    <label for="confirm-password" class="form-floating">Konfirmasi Password Baru</label>
+                                    <input type="text" class="form-control" id="confirm-password" name="confirm-password"
                                         value="">
                                 </div>
                             </div>
