@@ -99,7 +99,7 @@ class UserController extends Controller
         ]);
 
         $user = User::where('id_user',Auth::user()->id_user)->first();
-        // dd($user);
+        
         // Memeriksa apakah password saat ini sesuai dengan yang diberikan
         if (!Hash::check($request->input('current-password'), $user->password)) {
             return redirect()->back()->withErrors(['current_password' => 'Password saat ini tidak valid.']);
