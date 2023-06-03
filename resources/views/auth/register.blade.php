@@ -26,6 +26,7 @@
                                         {{-- Hidden input --}}
                                         <input type="text" name="id_user" id="id_user" value="{{ $kode }}" hidden>
                                         <input type="text" name="role" id="role" value="{{ 'Tamu' }}" hidden>
+                                        <input type="text" name="status" id="status" value="{{ 'Register' }}"  hidden>
 
                                         <div class="col-12">
                                             <label for="nama" class="form-label">Nama Lengkap</label>

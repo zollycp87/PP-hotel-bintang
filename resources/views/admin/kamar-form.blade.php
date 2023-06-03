@@ -68,9 +68,12 @@
                                 <select class="form-select mb-1" aria-label="Default select example" name="id_kategori"
                                     id="id_kategori">
                                     {{-- <option disabled value>Pilih Jenis Paket</option> --}}
-                                    <option selected disabled value="{{ $data->id_kategori }}">{{ $data->kategori->nama_kategori }}</option>
+                                    <option selected value="{{ $data->id_kategori }}">{{ $data->kategori->nama_kategori }}
+                                    </option>
                                     @foreach ($kategori as $item)
-                                        <option value="{{ $item->id_kategori }}">{{ $item->nama_kategori }}</option>
+                                        @if ($item->id_kategori !== $data->id_kategori)
+                                            <option value="{{ $item->id_kategori }}">{{ $item->nama_kategori }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>

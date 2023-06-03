@@ -3,7 +3,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="dashboard">
+            <a class="nav-link collapsed" href="{{ route('admin-dashboard') }}">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
             </a>
@@ -21,12 +21,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="kelola-tamu">
+                    <a href="{{ route('kelola-customer.index') }}">
                         <i class="bi bi-circle"></i><span>Data Tamu</span>
                     </a>
                 </li>
             </ul>
-        </li><!-- End Components Nav -->
+        </li><!-- End Kelola User -->
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#">
@@ -35,17 +35,36 @@
             </a>
             <ul id="hotel-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="kelola-kategori">
+                    <a href="{{ route('kelola-kategori.index') }}">
                         <i class="bi bi-circle"></i><span>Data Kategori Kamar</span>
                     </a>
                 </li>
                 <li>
-                    <a href="kelola-kamar">
+                    <a href="{{ route('kelola-kamar.index') }}">
                         <i class="bi bi-circle"></i><span>Data Kamar</span>
                     </a>
                 </li>
             </ul>
-        </li><!-- End Components Nav -->
+        </li><!-- End Kelola Hotel -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#booking-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-calendar-check-fill"></i><span>Kelola Data Hotel</span><i
+                    class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="booking-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="{{ route('kelola-kategori.index') }}">
+                        <i class="bi bi-circle"></i><span>Data Booking</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('kelola-kamar.index') }}">
+                        <i class="bi bi-circle"></i><span>Data Kamar</span>
+                    </a>
+                </li>
+            </ul>
+        </li><!-- End Kelola Booking -->
 
     </ul>
 

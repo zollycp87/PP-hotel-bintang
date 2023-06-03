@@ -69,9 +69,9 @@
 
                             <div class="row mt-2">
                                 <div class="col-4">
-                                    @if ($data->img)
+                                    @if (Auth::user()->img)
                                         <div class="mb-3 d-flex justify-content-center">
-                                            <img src="{{ url('foto') . '/' . $data->img }}" alt="" width="100px"
+                                            <img src="{{ url('foto') . '/' . Auth::user()->img }}" alt="" width="100px"
                                                 height="100px">
                                         </div>
                                     @endif

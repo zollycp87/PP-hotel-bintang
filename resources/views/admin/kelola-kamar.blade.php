@@ -1,7 +1,7 @@
 @extends('layouts.main-admin')
 @section('content')
     <div class="pagetitle">
-        <h1>Kelola Data User</h1>
+        <h1>Kelola Data Kamar</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -40,6 +40,10 @@
                             <td>{{ $item->kategori->nama_kategori }}</td>
                             <td>Rp. {{ $item->kategori->harga_kategori }}</td>
                             <td>
+                                {{-- <select class="form-select" name="status" onchange="updateStatus('{{ $item->id }}', this.value)">
+                                    <option value="Ready" {{ $item->status == 'Ready' ? 'selected' : '' }}>Ready</option>
+                                    <option value="Booked" {{ $item->status == 'Not Ready' ? 'selected' : '' }}>Booked</option>
+                                </select> --}}
                                 @if ($item->status == "Ready" )
                                     <span class="badge rounded-pill bg-success">{{ $item->status }}</span>
                                 @else

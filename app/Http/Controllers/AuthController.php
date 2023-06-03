@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class AuthController extends Controller
         return view('auth.register', compact('kode'));
     }
 
-    public function login(Request $request)
+    public function login(Request $request) //Proses Login
     {
         $infologin = $request->validate([
             'email' => 'required|email:dns',
@@ -46,7 +47,7 @@ class AuthController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(Request $request) //Proses Register
     {
         $request->validate([
             'nama' => 'required',
@@ -76,6 +77,13 @@ class AuthController extends Controller
 
         User::create($data);
 
+        Customer::create([
+            'id_user' => $request->input('id_user'),
+            'nama' => $request->input('nama'),
+            'status_cust' => $request->input('status')
+            // Tambahkan data pelanggan lain yang diperlukan
+        ]);
+
         $infologin = [
             'email' => $request->email,
             'password' => $request->password
@@ -90,7 +98,8 @@ class AuthController extends Controller
         return back()->with('loginError', 'Login Gagal');
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request) //Proses Logout
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
