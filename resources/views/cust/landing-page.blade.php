@@ -40,7 +40,11 @@
         $('#start_date, #end_date').change(function() {
             var startDate = $('#start_date').val();
             var endDate = $('#end_date').val();
-
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN" : "{{ csrf_token() }}"
+                }
+            })
             if (startDate && endDate) {
                 $.ajax({
                     url: '{{ route('calculate-price') }}',
@@ -49,6 +53,7 @@
                         start_date: startDate,
                         end_date: endDate
                     },
+                    dataType: 'json',
                     success: function(response) {
                         $('#price').val(response.total_price);
                     },

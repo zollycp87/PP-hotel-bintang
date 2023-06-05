@@ -9,12 +9,7 @@ class CustomerController extends Controller
 {
     public function index() //menampilkan data untuk ADMIN
     {
-        $posts = Customer::with('user')
-            ->whereHas('user', function ($query) {
-                $query->where('role', 'Tamu');
-            })
-            ->orderBy('id_user', 'desc')
-            ->get();
+        $posts = Customer::all();
         return view('admin.kelola-customer', compact('posts'));
     }
 

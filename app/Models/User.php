@@ -63,17 +63,22 @@ class User extends Authenticatable
     {
         if ($route === 'register') {
             $prefix = 'C';
-        } else {
-            $prefix = 'A';
+            $kode = DB::table('users')->where('id_user', 'LIKE', $prefix . '%')->max('id_user');
+        } else if($route === 'booking.create'){
+            $prefix = 'CU';
+            $kode = DB::table('customer')->where('id_customer', 'LIKE', $prefix . '%')->max('id_customer');
         }
-    
-        $kode = DB::table('users')->where('id_user', 'LIKE', $prefix . '%')->max('id_user');
+        else {
+            $prefix = 'A';
+            $kode = DB::table('users')->where('id_user', 'LIKE', $prefix . '%')->max('id_user');
+        }
+
         $kode = str_replace($prefix, '', $kode);
         $kode = (int) $kode + 1;
         $incrementKode = $kode;
-    
+
         // $addNol = ($incrementKode < 10) ? '0' : '';
-    
+
         // $kodeBaru = $prefix . $addNol . $incrementKode;
         $kodeBaru = $prefix . $incrementKode;
         return $kodeBaru;

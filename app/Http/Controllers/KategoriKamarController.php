@@ -36,6 +36,7 @@ class KategoriKamarController extends Controller
     {
         Session::flash('nama_kategori', $request->nama_kategori);
         Session::flash('harga_kategori', $request->harga_kategori);
+        Session::flash('kapasitas', $request->kapasitas);
         Session::flash('deskripsi', $request->deskripsi);
 
         $id_kategori = $request->input('id_kategori');
@@ -55,6 +56,7 @@ class KategoriKamarController extends Controller
             'id_kategori' => $id_kategori,
             'nama_kategori' => $request->nama_kategori,
             'harga_kategori' => $request->harga_kategori,
+            'kapasitas' => $request->kapasitas,
             'deskripsi' => $request->deskripsi,
             'img' => $image_name
         ];
@@ -88,6 +90,7 @@ class KategoriKamarController extends Controller
             'id_kategori' => $id_kategori,
             'nama_kategori' => $request->nama_kategori,
             'harga_kategori' => $request->harga_kategori,
+            'kapasitas' => $request->kapasitas,
             'deskripsi' => $request->deskripsi,
         ];
 

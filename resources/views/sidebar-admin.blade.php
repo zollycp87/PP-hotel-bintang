@@ -49,12 +49,12 @@
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#booking-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-calendar-check-fill"></i><span>Kelola Data Hotel</span><i
+                <i class="bi bi-calendar-check-fill"></i><span>Kelola Data Booking</span><i
                     class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="booking-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="{{ route('kelola-kategori.index') }}">
+                    <a href="{{ route('booking.index') }}">
                         <i class="bi bi-circle"></i><span>Data Booking</span>
                     </a>
                 </li>

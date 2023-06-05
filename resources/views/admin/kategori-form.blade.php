@@ -34,6 +34,11 @@
                                     value="{{ Session::get('harga_kategori') }}">
                             </div>
                             <div class="col-12">
+                                <label for="kapasitas" class="form-label">Kapasitas Maksimum</label>
+                                <input type="number" class="form-control" id="kapasitas" name="kapasitas"
+                                    value="{{ Session::get('kapasitas') }}">
+                            </div>
+                            <div class="col-12">
                                 <label for="deskripsi" class="form-label">Deskripsi Fasilitas Kategori</label>
                                 <textarea type="text" class="form-control" id="deskripsi" name="deskripsi" value="{{ Session::get('deskripsi') }}"></textarea>
                             </div>
@@ -86,6 +91,11 @@
                                 <label for="harga_kategori" class="form-label">Harga</label>
                                 <input type="number" class="form-control" id="harga" name="harga_kategori"
                                     value="{{ $data->harga_kategori }}">
+                            </div>
+                            <div class="col-12">
+                                <label for="kapasitas" class="form-label">Kapasitas Maksimum</label>
+                                <input type="number" class="form-control" id="kapasitas" name="kapasitas"
+                                    value="{{ $data->kapasitas }}">
                             </div>
                             <div class="col-12">
                                 <label for="deskripsi" class="form-label">Deskripsi Fasilitas Kategori</label>

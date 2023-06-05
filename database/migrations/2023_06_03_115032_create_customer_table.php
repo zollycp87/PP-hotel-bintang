@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('customer', function (Blueprint $table) {
+            $table->string('id_customer')->primary()->length(20);
             $table->string('id_user')->length(20);
-            $table->foreign('id_user')->references('id_user')->on('users');
             $table->string('nama');
             $table->string('alamat')->nullable();
             $table->string('no_hp')->nullable();

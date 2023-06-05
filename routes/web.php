@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HitungController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\KategoriKamarController;
 use App\Http\Controllers\UserController;
+use App\Models\Kamar;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,6 +62,11 @@ Route::prefix('admin')->group(function () {
     });
     Route::resource('/kelola-kamar', KamarController::class);
     // END
+
+    //Kelola Booking
+    Route::resource('/booking', BookingController::class);
+    Route::get('/get-harga/{idKategori}', [BookingController::class, 'getHarga'])->name('get.harga');
+    //END
 });
 
 //ROLE-CUSTOMER

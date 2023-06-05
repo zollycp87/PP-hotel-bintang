@@ -78,6 +78,7 @@ class AuthController extends Controller
         User::create($data);
 
         Customer::create([
+            'id_customer' => $request->input('id_customer'),
             'id_user' => $request->input('id_user'),
             'nama' => $request->input('nama'),
             'status_cust' => $request->input('status')

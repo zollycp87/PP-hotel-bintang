@@ -27,9 +27,13 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <h5 class="card-title">{{ $item->nama_kategori }}</h5>
-                            <h4 class="card-title">Rp. {{ $item->harga_kategori }}</h4>
+                            <h4 class="card-title">Rp {{ number_format($item->harga_kategori, 0, '.', ',') }}</h4>
                         </div>
-                        <p class="card-text">{{ $item->deskripsi }}</p>
+                        <p class="card-text">
+                            {{ $item->deskripsi }}
+                            <br>
+                            Kapasitas Maksimum : {{ $item->kapasitas }} orang
+                        </p>
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-end">

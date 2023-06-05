@@ -15,7 +15,6 @@ class HitungController extends Controller
         $numberOfDays = $endDate->diffInDays($startDate);
         $pricePerDay = 60000;
         $totalPrice = $pricePerDay * $numberOfDays;
-        dd($totalPrice);
 
         return response()->json(['total_price' => $totalPrice]);
     }

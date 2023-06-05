@@ -19,6 +19,7 @@ class KategoriKamar extends Model
         'id_kategori',
         'nama_kategori',
         'harga_kategori',
+        'kapasitas',
         'deskripsi',
         'img',
     ];
