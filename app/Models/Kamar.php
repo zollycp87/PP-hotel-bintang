@@ -26,6 +26,11 @@ class Kamar extends Model
         return $this->belongsTo(KategoriKamar::class, 'id_kategori');
     }
 
+    public function detail()
+    {
+        return $this->hasMany(DetailBooking::class);
+    }
+
     public static function id()
     {
         $kode = DB::table('kamar')->max('no_kamar');

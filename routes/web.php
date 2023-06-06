@@ -54,13 +54,14 @@ Route::prefix('admin')->group(function () {
     // END
 
     //Kelola Kamar
-    Route::get('/kelola-kamar', function () {
-        return view('admin.kelola-kamar');
-    })->name('kelola-kamar');
-    Route::get('/kamar-form', function () {
-        return view('admin.kamar-form');
-    });
+    // Route::get('/kelola-kamar', function () {
+    //     return view('admin.kelola-kamar');
+    // })->name('kelola-kamar');
+    // Route::get('/kamar-form', function () {
+    //     return view('admin.kamar-form');
+    // });
     Route::resource('/kelola-kamar', KamarController::class);
+    Route::post('/kelola-kamar/filter', [KamarController::class, 'filter'])->name('kelola-kamar.filter');
     // END
 
     //Kelola Booking
