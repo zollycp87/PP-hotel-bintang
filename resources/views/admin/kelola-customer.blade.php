@@ -15,17 +15,18 @@
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-between">
                 <h5 class="card-title d-flex justify-content-start">Data Customer</h5>
-                <h5 class="card-title d-flex justify-content-end">
+                {{-- <h5 class="card-title d-flex justify-content-end">
                     <a href="{{ route('kelola-user.create') }}" type="button" class="btn btn-primary"><i
                             class="bi bi-plus me-1"></i> Tambah Data</a>
-                </h5>
+                </h5> --}}
             </div>
             <!-- Bordered Table -->
-            <table class="table table-bordered">
+            <table id="myTable" class="table table-bordered">
                 <thead>
                     <tr>
                         <th scope="col">No</th>
-                        <th scope="col">ID</th>
+                        <th scope="col">Id Customer</th>
+                        <th scope="col">Id User</th>
                         <th scope="col">Nama</th>
                         <th scope="col">Alamat</th>
                         <th scope="col">Nomor Telepon</th>
@@ -38,6 +39,7 @@
                     @forelse ($posts as $item)
                         <tr>
                             <th scope="row">{{ $nomor_urut++ }}</th>
+                            <td>{{ $item->id_customer }}</td>
                             <td>{{ $item->id_user }}</td>
                             <td>{{ $item->nama }}</td>
                             <td>{{ $item->alamat }}</td>
@@ -66,4 +68,11 @@
 @endsection
 @section('sidebar')
     @include('sidebar-admin')
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#myTable').DataTable();
+        });
+    </script>
 @endsection

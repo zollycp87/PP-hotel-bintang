@@ -26,8 +26,20 @@ class Booking extends Model
         'status_booking'
     ];
 
+    public function detail()
+    {
+        return $this->hasMany(DetailBooking::class, 'invoice');
+    }
 
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'id_customer');
+    }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_customer');
+    }
     
     public static function invoice()
     {

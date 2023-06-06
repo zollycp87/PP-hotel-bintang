@@ -18,4 +18,15 @@ class DetailBooking extends Model
         'id_kategori',
         'no_kamar'
     ];
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class,'invoice');
+    }
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriKamar::class,'id_kategori');
+    }
+    
 }

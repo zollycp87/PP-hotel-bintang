@@ -29,6 +29,11 @@ class KategoriKamar extends Model
         return $this->hasMany(Kamar::class);
     }
 
+    public function detail()
+    {
+        return $this->hasMany(DetailBooking::class);
+    }
+
     public static function id()
     {
         $kode = DB::table('kategori_kamar')->max('id_kategori');

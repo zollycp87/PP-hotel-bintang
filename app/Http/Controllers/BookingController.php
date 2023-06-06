@@ -15,8 +15,14 @@ class BookingController extends Controller
 {
     public function index() //Admin
     {
-        $posts = Booking::all();
-        return view('admin.kelola-booking', compact('posts'));
+        $posts = Booking::with('detail', 'customer')->get();
+        $details = DetailBooking::with('kategori')
+            ->select('invoice', 'id_kategori')
+            ->selectRaw('COUNT(DISTINCT no_kamar) AS jumlah_kamar')
+            ->groupBy('invoice', 'id_kategori')
+            ->get();
+        // dd($posts);
+        return view('admin.kelola-booking', compact('posts', 'details'));
     }
 
     public function create()
@@ -78,7 +84,7 @@ class BookingController extends Controller
         $invoice = $request->input('invoice');
         $idKategori = $request->input('id_kategori');
         $noKamarArray = $request->input('no_kamar');
-        
+
         foreach ($noKamarArray as $noKamar) {
             $detailBooking = new DetailBooking();
             $detailBooking->invoice = $invoice;

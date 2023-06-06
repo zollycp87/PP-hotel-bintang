@@ -59,6 +59,13 @@ class User extends Authenticatable
         return $this->hasOne(Customer::class);
     }
 
+    public function booking()
+    {
+        return $this->hasMany(Booking::class. 'id_customer');
+    }
+
+
+
     public static function id($route)
     {
         if ($route === 'register') {

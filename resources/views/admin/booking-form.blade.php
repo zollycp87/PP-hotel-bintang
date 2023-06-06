@@ -142,41 +142,6 @@
             {{-- END --}}
         </div>
     @endif
-    <script>
-        $(document).ready(function() {
-            $('#jumlah_hari, #start_date').change(function() {
-                var jumlahHari = $('#jumlah_hari').val();
-                var startDate = $('#start_date').val();
-
-                if (jumlahHari && startDate) {
-                    // Menghitung tanggal akhir berdasarkan lama hari dan tanggal mulai
-                    var endDate = new Date(startDate);
-                    endDate.setDate(endDate.getDate() + parseInt(jumlahHari));
-
-                    // Mengubah format tanggal menjadi YYYY-MM-DD untuk input date
-                    var formattedEndDate = endDate.toISOString().split('T')[0];
-
-                    // Mengatur nilai input end_date
-                    $('#end_date').val(formattedEndDate);
-                }
-            });
-
-            $('#start_date, #end_date').change(function() {
-                var startDate = $('#start_date').val();
-                var endDate = $('#end_date').val();
-
-                if (startDate && endDate) {
-                    // Menghitung lama hari berdasarkan tanggal mulai dan tanggal akhir
-                    var start = new Date(startDate);
-                    var end = new Date(endDate);
-                    var diff = Math.floor((end - start) / (1000 * 60 * 60 * 24));
-
-                    // Mengatur nilai input jumlah_hari
-                    $('#jumlah_hari').val(diff);
-                }
-            });
-        });
-    </script>
 @endsection
 @section('sidebar')
     @include('sidebar-admin')

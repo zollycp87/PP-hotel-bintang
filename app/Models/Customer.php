@@ -10,6 +10,7 @@ class Customer extends Model
     use HasFactory;
 
     protected $table = 'customer';
+    protected $primaryKey = 'id_customer';
     // public $timestamps = false;
     protected $keyType = 'string';
 
@@ -26,6 +27,11 @@ class Customer extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function booking()
+    {
+        return $this->hasMany(Booking::class);
     }
 
 }
