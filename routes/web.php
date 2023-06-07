@@ -21,9 +21,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('test');
-});
+// Route::get('/', function () {
+//     return view('cust.landing-page');
+// });
+Route::get('/', [CustomerController::class, 'indexCust'])->name('landing-page');
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', function () {

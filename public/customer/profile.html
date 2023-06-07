@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- favicon-->
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <!-- Site Title-->
+    <title>HOTEL BINTANG FLORES</title>
+    <meta name="description" content="A Template for Architectural Interior Design company website.">
+    <!-- Bootstrap CSS file-->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Flickity CSS file-->
+    <link href="assets/css/flickity.min.css" rel="stylesheet">
+    <!-- Main CSS file-->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <!-- Fontawesome 5 CSS file-->
+    <link href="assets/css/fontawesome-all.min.css" rel="stylesheet">
+    <!-- Magnific Popup CSS-->
+    <link href="assets/css/magnific-popup.css" rel="stylesheet">
+    <!-- Google Fonts-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&amp;display=swap">
+  </head>
+  <body>
+    <!-- Navbar-->
+    <div class="site-header">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container"><a class="navbar-brand" href="index.html"><h1>Hotel Bintang Flores</h1></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+              <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pages</a>
+                <div class="dropdown-menu"><a class="dropdown-item" href="page-about-us.html">About Us</a><a class="dropdown-item" href="page-contact.html">Contact Us</a></div>
+              </li>
+              <li class="nav-item dropdown mega_menu_holder"><a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Booking</a>
+                <div class="dropdown-menu"><a class="dropdown-item" href="page-property-list.html">Booking Kamar</a><a class="dropdown-item" href="property-single.html">Detail Kamar</a></div>
+              </li>
+              <!-- <li class="nav-item"><a class="nav-link" href="element-accordions.html">Element</a></li> -->
+              <li class="nav-item"><a class="nav-link" href="page-riwayat.html">Riwayat</a></li>
+            </ul>
+            <ul class="nav-modules">
+              <!-- Login-->
+              <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false class="btn btn-black" href="#">LOGIN</a>               
+              <div class="dropdown-menu"><a class="dropdown-item" href="profile.html">Profile</a><a class="dropdown-item" href="index.html">Log Out</a></div>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <!-- End Navbar-->
+
+    <!-- form -->
+    <div class="container">
+    <div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-5">
+            <div class="card-body">
+                    <h4 class="card-title">Mengubah Data Profile</h4>
+            </div>
+
+            <form action="" method="post" class="row g-3" enctype="multipart/form-data">
+              <div class="row mt-2">
+                <div class="col-4">
+
+                 <div class="mb-3 d-flex justify-content-center">
+                  <img src="assets\images\team\t5.jpg" alt="" width="200px" height="200px">
+                 </div>
+                  <label for="img" class="form-label">Pilih Gambar</label>
+                  <input type="file" class="form-control" id="img" name="img">
+
+                </div>
+                <div class="col-8">
+                  <div class="col-12" hidden>
+                    <label for="id_kategori" class="form-label">ID User</label>
+                    <input type="text" class="form-control" id="id_kategori" name="id_kategori" maxlength="6" value="" placeholder="" aria-label="Disable input example" readonly>
+                  </div>
+
+                  <div class="col-12">
+                    <label for="nama" class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-control" id="nama" name="nama" value="" >
+                  </div>
+
+                  <div class="col-12">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" value="">
+                  </div>
+
+                  <div class="col-12">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="">
+                  </div>
+
+                  <div class="col-12">
+                    <label for="alamat" class="form-label">Alamat</label>
+                    <input type="text" class="form-control" id="alamat" name="alamat" value="">
+                  </div>
+
+                  <div class="col-12">
+                    <label for="jeniskelamin" class="form-label">Jenis Kelamin</label>
+                    <input type="text" class="form-control" id="jeniskelamin" name="jeniskelamin" value="">
+                </div> 
+
+              </div>
+              <div class="text-center mt-5" >
+                <button type="submit" class="btn btn-primary">Simpan Perubahan </button>
+            </div>
+            </form>
+        </div>
+    </div>
+    </div>
+
+<!-- ubah password -->
+    <div class="col-xl-4">
+      <div class="card">
+          <div class="card-body">
+              <h5 class="card-title mb-4">Mengubah Password</h5>
+              <form method="post" class="row g-3" enctype="multipart/form-data" id="passForm" name="passForm">
+
+                <div class="row">
+                  <div class="col-12">
+
+                      <div class="col-12" hidden>
+                          <label for="id_kategori" class="form-label">ID User</label>
+                          <input type="text" class="form-control" id="id_kategori" name="id_kategori" maxlength="6" value="" placeholder=""aria-label="Disabled input example" readonly>
+                      </div>
+
+                      <div class="col-12 mb-4">
+                        <label for="current-password" class="form-floating">Password sekarang</label>
+                        <input type="password" class="form-control" id="current-password" name="current-password"value="">
+                        <div class="invalid-feedback"></div>
+                      </div>
+
+                      <div class="col-12 mb-2">
+                        <label for="new-password" class="form-floating">Password Baru</label>
+                        <input type="password" class="form-control" id="new-password" name="new-password" value="">
+                        <div class="invalid-feedback"></div>
+                      </div>
+
+                      <div class="col-12 mb-2">
+                        <label for="confirm-password" class="form-floating">Konfirmasi Password Baru</label>
+                        <input type="password" class="form-control" id="confirm-password" name="confirm-password" value="">
+                        <div class="invalid-feedback"></div>
+                      </div>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Simpan Password</button>
+              </div>
+              </form>
+          </div>
+      </div>
+    </div>
+
+
+</div>
+    <!-- Footer-->
+    <footer class="site-footer">
+        <div class="footer-widgets">
+          <div class="container">
+            <div class="row gx-lg-5">
+              <div class="col-lg-6 pr-lg-10">
+                <div class="footer-widget footer-widget-1">
+                  <h2 class="mb-4 text-ebony-clay">Hotel Bintang Flores</h2>
+                  <p class="text-abbey pr-6">89, Jl. Flores No.3, Rejamulya, Gunungsimping, Kec. Cilacap Tengah, Kabupaten Cilacap, Jawa Tengah 53223.</p>
+                </div>
+              </div>
+              <div class="col-lg-6"> 
+                <div class="row gx-lg-5">
+                  <div class="col-lg-4">
+                    <div class="footer-widget footer-widget-4">
+                      <ul>
+                        <li><a href="page-contact-us.html">Contact Us</a></li>
+                        <li><a href="page-contact-us.html">hotelbintangflores@gmail.com</a></li>
+                        <li><a href="page-contact-us.html">02129707601</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="col-lg-5">
+                    <div class="footer-widget footer-widget-3">
+                      <div class="text-abbey">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="footer-widget footer-widget-2">
+                      <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="page-services.html">Service</a></li>
+                        <li><a href="page-about-us.html">About Us</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom-area">
+          <div class="container">
+            <div class="row gx-lg-5 align-items-center">
+              <div class="col-lg-6 col-md-12">
+                <div class="footer-widget">
+                  <p class="m-md-0">© 2020 Energetic Themes</p>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-12">
+                <div class="footer-widget">
+                  <ul class="list-inline m-lg-0 p-lg-0 text-md-right footer-nav">
+                    <li><a href="page-privacy-terms.html">Privacy Policy</a></li>
+                    <li><a href="page-privacy-terms.html">Terms & Conditions</a></li>
+                    <li class="list-inline-item py-lg-2 py-md-4 py-3 pl-lg-5 pl-md-10 pr-2"><a href="#"><i class="fab fa-linkedin-in icon"></i></a></li>
+                    <li class="list-inline-item py-2 pr-2"><a href="#"><i class="fab fa-facebook-square icon"></i></a></li>
+                    <li class="list-inline-item py-2 pr-2"><a href="#"><i class="fab fa-twitter icon"></i></a></li>
+                    <li class="list-inline-item py-2 pr-2"><a href="#"><i class="fab fa-instagram icon"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <!-- End Footer-->
+      <!-- javascript files-->
+      <!-- jquery-->
+      <script src="assets/js/jquery.min.js"></script>
+      <!-- lozad js-->
+      <script src="assets/js/lozad.min.js"></script>
+      <!-- Bootstrap js-->
+      <script src="assets/js/bootstrap.bundle.min.js"></script>
+      <!-- Aos js-->
+      <script src="assets/js/aos.js"></script>
+      <!-- Slick flickity js-->
+      <script src="assets/js/flickity.pkgd.min.js"></script>
+      <!-- Magnific popup js-->
+      <script src="assets/js/jquery.magnific-popup.min.js"></script>
+      <!-- Countdown js-->
+      <script src="assets/js/jquery.countdown.js"></script>
+      <!-- CountTo js-->
+      <script src="assets/js/jquery.countTo.js"></script>
+      <!-- Masonry js-->
+      <script src="assets/js/masonry.pkgd.min.js"></script>
+      <!-- Global - Main js-->
+      <script src="assets/js/global.js"></script>
+    </body>
+  </html>
