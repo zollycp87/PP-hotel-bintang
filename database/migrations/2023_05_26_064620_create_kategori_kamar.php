@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('nama_kategori')->unique();
             $table->unsignedInteger('harga_kategori')->default('0');
             $table->integer('kapasitas');
-            $table->text('deskripsi')->default('-');
-            $table->text('img')->default('-');
+            $table->text('deskripsi')->nullable();
+            $table->text('img')->nullable();
             // $table->timestamps();
         });
     }

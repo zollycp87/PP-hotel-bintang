@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\KategoriKamar;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,11 +36,10 @@ class AuthController extends Controller
         if (Auth::attempt($infologin)) {
             //kalau berhasil
             $request->session()->regenerate();
-            if (Auth::user()->role == 'Admin') {
-
+            if (Auth::user()->role == 'Admin' || Auth::user()->role == 'Super Admin') {
                 return redirect()->intended('admin/dashboard');
             } else if (Auth::user()->role == 'Tamu') {
-
+                // dd($kategoris);
                 return redirect()->intended('cust/landing-page');
             }
         } else {

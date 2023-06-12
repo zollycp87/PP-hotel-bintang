@@ -16,11 +16,12 @@ class UserSeeder extends Seeder
     {
         User::create([
             'id_user' => 'A1',
-            'username' => 'Super Admin',
-            'nama' => 'Admin 1',
+            'username' => 'superadmin',
+            'nama' => 'Super Admin',
             'password' => bcrypt('admin1234'),
-            'email' => 'admin@gmail.com',
-            'role' => 'Admin'
+            'email' => 'superadmin@gmail.com',
+            'role' => 'Super Admin'
+            
         ]);
     }
 }

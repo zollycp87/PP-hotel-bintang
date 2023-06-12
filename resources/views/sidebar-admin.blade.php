@@ -9,24 +9,26 @@
             </a>
         </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#user-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-person-lines-fill"></i><span>Kelola Data User</span><i
-                    class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="user-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="{{ route('kelola-user.index') }}">
-                        <i class="bi bi-circle"></i><span>Data User</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('kelola-customer.index') }}">
-                        <i class="bi bi-circle"></i><span>Data Tamu</span>
-                    </a>
-                </li>
-            </ul>
-        </li><!-- End Kelola User -->
+        @if (Auth::user()->role == 'Super Admin')
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#user-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-person-lines-fill"></i><span>Kelola Data User</span><i
+                        class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="user-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="{{ route('kelola-user.index') }}">
+                            <i class="bi bi-circle"></i><span>Data User</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('kelola-customer.index') }}">
+                            <i class="bi bi-circle"></i><span>Data Tamu</span>
+                        </a>
+                    </li>
+                </ul>
+            </li><!-- End Kelola User -->
+        @endif
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#hotel-nav" data-bs-toggle="collapse" href="#">
@@ -56,11 +58,6 @@
                 <li>
                     <a href="{{ route('booking.index') }}">
                         <i class="bi bi-circle"></i><span>Data Booking</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('kelola-kamar.index') }}">
-                        <i class="bi bi-circle"></i><span>Data Kamar</span>
                     </a>
                 </li>
             </ul>

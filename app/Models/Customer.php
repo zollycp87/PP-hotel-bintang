@@ -31,7 +31,7 @@ class Customer extends Model
 
     public function booking()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class, 'id_customer');
     }
 
 }

@@ -24,10 +24,10 @@
                                     <form action="{{ route('register.store') }}" method="post" class="row g-3" >
                                         @csrf
                                         {{-- Hidden input --}}
-                                        <input type="text" name="id_customer" id="id_user" value="{{ $kode }}" hidden>
+                                        <input type="text" name="id_customer" id="id_customer" value="{{ $kode }}" hidden>
                                         <input type="text" name="id_user" id="id_user" value="{{ $kode }}" hidden>
                                         <input type="text" name="role" id="role" value="{{ 'Tamu' }}" hidden>
-                                        <input type="text" name="status" id="status" value="{{ 'Register' }}"  hidden>
+                                        <input type="text" name="status" id="status" value="{{ 'Online' }}"  hidden>
 
                                         <div class="col-12">
                                             <label for="nama" class="form-label">Nama Lengkap</label>

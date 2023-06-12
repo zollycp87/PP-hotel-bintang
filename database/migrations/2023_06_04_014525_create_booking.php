@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('booking', function (Blueprint $table) {
             $table->string('invoice')->primary();
+            $table->date('tanggal_pesan');
             $table->date('start_date');
             $table->date('end_date');
             $table->string('id_customer')->length(20);
             $table->foreign('id_customer')->references('id_customer')->on('customer');
-            $table->bigInteger('total_bayar')->default(0);
-            $table->text('bukti_bayar')->default('-');
+            $table->string('id_user')->length(20);
+            $table->foreign('id_user')->references('id_user')->on('users');
             $table->enum('status_booking',['New', 'Booking', 'Check In', 'Check Out', 'Cancel']);
             $table->timestamps();
         });

@@ -13,7 +13,8 @@
 
     <div class="d-flex align-items-center justify-content-end">
         <h5 class="card-title d-flex justify-content-end">
-            <a href="{{ route('kelola-kategori.create') }}" class="btn btn-primary"><i class="bi bi-plus me-1"></i> Tambah Data</a>
+            <a href="{{ route('kelola-kategori.create') }}" class="btn btn-primary"><i class="bi bi-plus me-1"></i> Tambah
+                Data</a>
         </h5>
     </div>
     @include('komponen.pesan')
@@ -33,6 +34,9 @@
                             {{ $item->deskripsi }}
                             <br>
                             Kapasitas Maksimum : {{ $item->kapasitas }} orang
+                            <br>
+                                @php($jumlah = $jumlahKamarReady[$item->id_kategori] ?? 0)
+                                Availability : {{ $jumlah }} kamar
                         </p>
                     </div>
                     <div class="card-footer">
@@ -54,7 +58,7 @@
             </div>
         @empty
             <div class="alert alert-danger">
-                Oops Data Kosong
+                Data Belum Tersedia
             </div>
         @endforelse
     </div>
@@ -66,7 +70,7 @@
             alert(id);
 
             $.ajax({
-                url: 'kelola-kategori/'+id+'edit/',
+                url: 'kelola-kategori/' + id + 'edit/',
                 type: 'GET',
                 success: function(response) {
                     // $('#edit-modal .modal-content').html(response.html);

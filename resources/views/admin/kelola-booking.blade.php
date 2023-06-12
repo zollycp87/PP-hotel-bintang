@@ -14,13 +14,40 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-between">
-                <h5 class="card-title d-flex justify-content-start">Data Kamar</h5>
+                <h5 class="card-title d-flex justify-content-start">Data Booking</h5>
                 <h5 class="card-title d-flex justify-content-end">
                     <a href="{{ route('booking.create') }}" type="button" class="btn btn-primary"><i
                             class="bi bi-plus me-1"></i> Tambah Data</a>
                 </h5>
             </div>
             @include('komponen.pesan')
+
+            <form action="{{ route('booking.filter') }}" method="post">
+                @csrf
+                <div class="row mb-3">
+                    <div class="col-4">
+                        {{-- <label for="booking-date" class="form-label">Filter Tanggal</label> --}}
+                        @if (Route::currentRouteName() == 'booking.filter')
+                            <input type="date" class="form-control mb-1 @error('booking-date') is-invalid @enderror"
+                                id="booking-date" name="booking-date" value="{{ $bookingDate }}" placeholder="">
+                            @error('booking-date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        @else
+                            <input type="date" class="form-control mb-1 @error('booking-date') is-invalid @enderror"
+                                id="booking-date" name="booking-date" value="{{ Carbon\Carbon::now()->format('Y-m-d') }}"
+                                placeholder="">
+                            @error('booking-date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        @endif
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-funnel me-1"></i></button>
+                    </div>
+                </div>
+            </form>
+
             <!-- Bordered Table -->
             <table class="table table-bordered" id="booking">
                 <thead>
@@ -32,12 +59,12 @@
                         <th scope="col">Tanggal mulai</th>
                         <th scope="col">Tanggal selesai</th>
                         <th scope="col">Total Bayar</th>
-
-                        <th scope="col">Status</th>
+                        <th scope="col">Status Bayar</th>
+                        <th scope="col">Status Booking</th>
                         <th scope="col">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="bookingTable">
                     @php($nomor_urut = 1)
                     @forelse ($posts as $item)
                         <tr>
@@ -47,8 +74,38 @@
                             <td>{{ $item->tanggal_pesan }}</td>
                             <td>{{ $item->start_date }}</td>
                             <td>{{ $item->end_date }}</td>
-                            <td>Rp {{ number_format($item->total_bayar, 0, '.', ',') }}</td>
-                            <td>{{ $item->status_booking }}</td>
+                            {{-- @dd($item->detailBayar) --}}
+                            <td>
+                                @foreach ($item->detailBayar as $detailBayar)
+                                    Rp {{ number_format($detailBayar->total_bayar, 0, '.', ',') }}
+                                @endforeach
+                            </td>
+
+                            <td>
+                                @foreach ($item->detailBayar as $detailBayar)
+                                    @if ($detailBayar->status_bayar == 'DP')
+                                        <span class="badge text-bg-primary">DP</span>
+                                    @elseif ($detailBayar->status_bayar == 'Pelunasan')
+                                        <span class="badge text-bg-info">Pelunasan</span>
+                                    @elseif ($detailBayar->status_bayar == 'Full Payment')
+                                        <span class="badge text-bg-success">Full Payment</span>
+                                    @endif
+                                @endforeach
+                            </td>
+
+                            <td>
+                                @if ($item->status_booking == 'New')
+                                    <span class="badge text-bg-primary">New</span>
+                                @elseif ($item->status_booking == 'Booking')
+                                    <span class="badge text-bg-warning">Booking</span>
+                                @elseif ($item->status_booking == 'Check In')
+                                    <span class="badge text-bg-success">Check In</span>
+                                @elseif ($item->status_booking == 'Check Out')
+                                    <span class="badge text-bg-danger">Check Out</span>
+                                @elseif ($item->status_booking == 'Cancel')
+                                    <span class="badge text-bg-dark">Cancel</span>
+                                @endif
+                            </td>
                             <td>
                                 <div class="d-flex justify-between">
                                     <button type="button" class="text-primary btn-details"
@@ -57,19 +114,19 @@
                                     |
                                     <a href="{{ route('booking.edit', $item->invoice) }}" class="text-secondary">Edit</a>
                                     |
-                                    <form action="{{ route('booking.destroy', $item->invoice) }}" method="post"
+                                    {{-- <form action="{{ route('booking.destroy', $item->invoice) }}" method="post"
                                         onsubmit="return confirm('Yakin akan menghapus data ?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" name="submit" class="text-danger"
                                             style="border: none; background: transparent;">Hapus</button>
-                                    </form>
+                                    </form> --}}
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <div class="alert alert-danger">
-                            Data Post belum Tersedia.
+                            Data Belum Tersedia.
                         </div>
                     @endforelse
                 </tbody>
@@ -90,8 +147,20 @@
                     </div>
                     <div class="modal-body" id="modalBodyDetail">
                         <div class="invoice-title">
-                            <h4 class="float-end font-size-12">Status <span
-                                    class="badge bg-success font-size-12 ms-2">{{ $item->status_booking }}</span></h4>
+                            <h4 class="float-end font-size-12">
+                                Status
+                                @if ($item->status_booking == 'New')
+                                    <span class="badge text-bg-primary">New</span>
+                                @elseif ($item->status_booking == 'Booking')
+                                    <span class="badge text-bg-warning">Booking</span>
+                                @elseif ($item->status_booking == 'Check In')
+                                    <span class="badge text-bg-success">Check In</span>
+                                @elseif ($item->status_booking == 'Check Out')
+                                    <span class="badge text-bg-danger">Check Out</span>
+                                @elseif ($item->status_booking == 'Cancel')
+                                    <span class="badge text-bg-dark">Cancel</span>
+                                @endif
+                            </h4>
                             <div class="mb-3">
                                 <h3 class="mb-1 text-muted">Hotel Bintang</h3>
                             </div>
@@ -160,7 +229,8 @@
                                                     <td hidden>
                                                         {{ $totalKategori = $detail->kategori->harga_kategori * $totalKamar * $lamaHari }}
                                                     </td>
-                                                    <td class="text-end">Rp{{ number_format($totalKategori, 0, '.', ',') }}
+                                                    <td class="text-end">
+                                                        Rp{{ number_format($totalKategori, 0, '.', ',') }}
                                                     </td>
                                                     <td hidden>{{ $total += $totalKategori }}</td>
                                                 </tr>
@@ -170,7 +240,8 @@
                                         <tr>
                                             <th scope="row" colspan="4" class="border-0 text-end">Total</th>
                                             <td class="border-0 text-end">
-                                                <h5 class="m-0 fw-semibold">Rp{{ number_format($total, 0, '.', ',') }}</h5>
+                                                <h5 class="m-0 fw-semibold">Rp{{ number_format($total, 0, '.', ',') }}
+                                                </h5>
                                             </td>
                                         </tr>
                                         <!-- end tr -->
@@ -189,9 +260,11 @@
         </div>
     @endforeach
 @endsection
+
 @section('sidebar')
     @include('sidebar-admin')
 @endsection
+
 @section('scripts')
     <script>
         $(document).ready(function() {
@@ -200,7 +273,7 @@
 
         function printModalContent() {
             var modalBodyContent = document.getElementById("modalBodyDetail").innerHTML;
-            var printWindow = window.open('', '_blank',);
+            var printWindow = window.open('', '_blank', );
             printWindow.document.open();
             printWindow.document.write('<html><head><title>Modal Body Content</title></head><body>');
             printWindow.document.write(modalBodyContent);

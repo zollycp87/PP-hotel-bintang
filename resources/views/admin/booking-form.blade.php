@@ -5,23 +5,53 @@
             <div class="card-body">
                 <h5 class="card-title">Menambah Data Pesanan</h5>
                 <br>
-                <form action="{{ route('booking.store') }}" method="post" class="row g-3" enctype="multipart/form-data">
+                <form id="formSimpan" action="{{ route('booking.store') }}" method="post" class="row g-3"
+                    enctype="multipart/form-data" onsubmit="return confirm('PASTIKAN PESANAN SUDAH BENAR!!')">
                     @csrf
                     <div class="row">
                         <div class="col-4" hidden>
                             <input type="text" name="invoice" id="invoice" value="{{ $invoice }}">
                             <input type="text" name="id_customer" id="id_customer" value="{{ $id_customer }}">
-                            <input type="text" name="status" id="status" value="{{ 'Unregister' }}">
+                            <input type="text" name="id_user" id="id_user" value="{{ Auth::user()->id_user }}">
+                            <input type="text" name="status" id="status" value="{{ 'Offline' }}">
                             <input type="text" name="status_booking" id="status" value="{{ 'Booking' }}">
                         </div>
                         <div class="col-12">
                             <label for="nama" class="form-label">Atas Nama</label>
                             <input type="text" class="form-control mb-1 @error('nama') is-invalid @enderror"
-                                id="nama" name="nama" value="" placeholder="">
+                                id="nama" name="nama" value="{{ old('nama') }}" placeholder="">
                             @error('nama')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="col-4">
+                            <label for="jumlah_hari" class="form-label">Lama Hari</label>
+                            <input type="number" class="form-control mb-1 @error('jumlah_hari') is-invalid @enderror"
+                                id="jumlah_hari" name="jumlah_hari" value="{{ old('jumlah_hari') }}" placeholder="">
+                            @error('jumlah_hari')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-4">
+                            <label for="start_date" class="form-label">Tanggal mulai</label>
+                            <input type="date" class="form-control mb-1 @error('nama') is-invalid @enderror"
+                                id="start_date" name="start_date" value="" placeholder="">
+                            @error('start_date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-4">
+                            <label for="end_date" class="form-label">Tanggal akhir</label>
+                            <input type="date" class="form-control mb-1" id="end_date" name="end_date" value=""
+                                placeholder="">
+                        </div>
+
+                        {{-- <div class="col-3 mt-4" hidden>
+                            <button type="button" id="filterData" class="btn btn-primary"><i class="bi bi-funnel me-1"></i>
+                                Lihat Kamar Ready</button>
+                        </div> --}}
+
                         <div class="col-4">
                             <label for="id_kategori" class="form-label">Pilih Kategori Kamar</label>
                             <select class="form-select mb-1" aria-label="Default select example" name="id_kategori"
@@ -36,128 +66,296 @@
                         <div class="col-4">
                             <label for="jumlah_kamar" class="form-label">Jumlah Kamar Yang Dipesan</label>
                             <input type="number" class="form-control mb-1 @error('jumlah_kamar') is-invalid @enderror"
-                                id="jumlah_kamar" name="jumlah_kamar" value="" placeholder="">
+                                id="jumlah_kamar" name="jumlah_kamar" value="{{ old('jumlah_kamar') }}" placeholder="">
                             @error('jumlah_kamar')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        {{-- SELECT PILIH KAMAR --}}
                         <div class="col-4">
                             <label for="no_kamar" class="form-label">Pilih Kamar</label>
-                            <select class="form-select mb-1" aria-label="Default select example" name="no_kamar[]"
-                                id="no_kamar" multiple size="">
-                                {{-- <option disabled selected>Pilih No Kamar</option> --}}
-                                @foreach ($kamar as $item)
-                                    <option value="{{ $item->no_kamar }}" data-kategori="{{ $item->id_kategori }}"
-                                        data-kamar="{{ $item->no_kamar }}">
-                                        {{ $item->no_kamar }}
-                                    </option>
-                                @endforeach
+                            <div class="kamarContainer">
+                                <select class="form-select mb-1" aria-label="Default select example" name="no_kamar[]"
+                                    id="no_kamar" multiple size="">
+                                    {{-- <option disabled selected>Pilih No Kamar</option> --}}
+                                    @foreach ($kamar as $item)
+                                        <option value="{{ $item->no_kamar }}" data-kategori="{{ $item->id_kategori }}"
+                                            data-kamar="{{ $item->no_kamar }}">
+                                            {{ $item->no_kamar }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        {{-- SELECT PILIH KAMAR END --}}
+
+                        <div class="col-6">
+                            <label for="status_bayar" class="form-label">Pilih Status Bayar</label>
+                            <select class="form-select mb-1" aria-label="Default select example" name="status_bayar"
+                                id="status_bayar">
+                                <option selected disabled value>Pilih Jenis Status Bayar</option>
+                                <option value="1">Full Payment</option>
+                                <option value="2">DP</option>
+                                <option value="3" disabled>Pelunasan</option>
                             </select>
                         </div>
-                        <div class="col-4">
-                            <label for="jumlah_hari" class="form-label">Lama Hari</label>
-                            <input type="number" class="form-control mb-1 @error('jumlah_hari') is-invalid @enderror"
-                                id="jumlah_hari" name="jumlah_hari" value="" placeholder="">
-                            @error('jumlah_hari')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-4">
-                            <label for="start_date" class="form-label">Tanggal mulai</label>
-                            <input type="date" class="form-control mb-1 @error('nama') is-invalid @enderror"
-                                id="start_date" name="start_date" value="" placeholder="">
-                            @error('start_date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-4">
-                            <label for="end_date" class="form-label">Tanggal akhir</label>
-                            <input type="date" class="form-control mb-1" id="end_date" name="end_date" value=""
-                                placeholder="">
-                        </div>
-                        <div class="col-12">
+                        <div class="col-6">
                             <label for="harga" class="form-label">Total Harga</label>
-                            <input type="number" class="form-control mb-1" id="harga" name="harga" value=""
-                                placeholder="">
+                            <input type="number" class="form-control mb-1" id="harga" name="harga"
+                                value="" placeholder="">
                         </div>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Simpan</button> |
+                        <button type="submit" id="mainSubmitButton" class="btn btn-primary">Simpan</button> |
                         <button type="reset" class="btn btn-secondary">Reset</button>
                     </div>
+                </form>
             </div>
-            </form><!-- Vertical Form -->
             {{-- END --}}
         </div>
     @else
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Mengubah Data Kamar</h5>
+                <h5 class="card-title">Menambah Data Pesanan</h5>
                 <br>
-                @include('komponen.pesan')
-                <form action="{{ route('kelola-kamar.update', $data->no_kamar) }}" method="post" class="row g-3"
-                    enctype="multipart/form-data">
+                <form id="formSimpan" action="{{ route('booking.update', $data->invoice) }}" method="post"
+                    class="row g-3" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="row">
+                        <div class="col-4" hidden>
+                            <input type="text" name="invoice" id="invoice" value="{{ $data->invoice }}">
+                            <input type="text" name="id_customer" id="id_customer" value="{{ $data->id_customer }}">
+                            <input type="text" name="id_user" id="id_user" value="{{ $data->id_customer }}">
+                            <input type="text" name="status" id="status" value="{{ 'Offline' }}">
+                        </div>
                         <div class="col-12">
-                            <div class="col-12">
-                                <label for="no_kamar" class="form-label">No Kamar</label>
-                                <input type="text" class="form-control mb-1" id="no_kamar" name="no_kamar"
-                                    maxlength="6" value="{{ $data->no_kamar }}" placeholder=""
-                                    aria-label="Disabled input example" readonly>
-                            </div>
-                            <div class="col-12">
-                                <label for="id_kategori" class="form-label">Pilih Kategori Kamar</label>
-                                <select class="form-select mb-1" aria-label="Default select example" name="id_kategori"
-                                    id="id_kategori">
-                                    {{-- <option disabled value>Pilih Jenis Paket</option> --}}
-                                    <option selected value="{{ $data->id_kategori }}">
-                                        {{ $data->kategori->nama_kategori }}
-                                    </option>
-                                    @foreach ($kategori as $item)
-                                        @if ($item->id_kategori !== $data->id_kategori)
-                                            <option value="{{ $item->id_kategori }}">{{ $item->nama_kategori }}</option>
-                                        @endif
+                            <label for="nama" class="form-label">Atas Nama</label>
+                            <input type="text" class="form-control mb-1 @error('nama') is-invalid @enderror"
+                                id="nama" name="nama" value="{{ $data->customer->nama }}" placeholder=""
+                                readonly>
+                            @error('nama')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-4" hidden>
+                            <label for="jumlah_hari" class="form-label">Lama Hari</label>
+                            <input type="number" class="form-control mb-1 @error('jumlah_hari') is-invalid @enderror"
+                                id="jumlah_hari" name="jumlah_hari" value="{{ old('jumlah_hari') }}" placeholder="">
+                            @error('jumlah_hari')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-6">
+                            <label for="start_date" class="form-label">Tanggal mulai</label>
+                            <input type="date" class="form-control mb-1 @error('nama') is-invalid @enderror"
+                                id="start_date" name="start_date" value="{{ $data->start_date }}" placeholder=""
+                                readonly>
+                            @error('start_date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-6">
+                            <label for="end_date" class="form-label">Tanggal akhir</label>
+                            <input type="date" class="form-control mb-1" id="end_date" name="end_date"
+                                value="{{ $data->end_date }}" placeholder="" readonly>
+                        </div>
+
+                        {{-- <div class="col-3 mt-4" hidden>
+                        <button type="button" id="filterData" class="btn btn-primary"><i class="bi bi-funnel me-1"></i>
+                            Lihat Kamar Ready</button>
+                    </div> --}}
+
+                        <div class="col-4">
+                            <label for="id_kategori" class="form-label">Pilih Kategori Kamar</label>
+                            <select class="form-select mb-1" aria-label="Default select example" name="id_kategori"
+                                id="id_kategori" disabled>
+                                <option selected value>
+                                    @foreach ($details->groupBy('id_kategori') as $kategoris => $detailsByKategori)
+                                        {{ $kategoris }}
+                                    @endforeach
+                                </option>
+                                @foreach ($kategori as $item)
+                                    <option value="{{ $item->id_kategori }}" data-harga="{{ $item->harga }}">
+                                        {{ $item->nama_kategori }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-4">
+                            <label for="jumlah_kamar" class="form-label">Jumlah Kamar Yang Dipesan</label>
+                            <input type="number" class="form-control mb-1 @error('jumlah_kamar') is-invalid @enderror"
+                                id="jumlah_kamar" name="jumlah_kamar" value="{{ $details->count() }}" placeholder=""
+                                readonly>
+                            @error('jumlah_kamar')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- SELECT PILIH KAMAR --}}
+                        <div class="col-4">
+                            <label for="no_kamar" class="form-label">Pilih Kamar</label>
+                            <div class="kamarContainer">
+                                <select class="form-select mb-1" aria-label="Default select example" name="no_kamar[]"
+                                    id="no_kamar" multiple size="" disabled>
+                                    {{-- <option disabled selected>Pilih No Kamar</option> --}}
+                                    @foreach ($details as $item)
+                                        <option value="{{ $item->no_kamar }}" data-kategori="{{ $item->id_kategori }}"
+                                            data-kamar="{{ $item->no_kamar }}">
+                                            {{ $item->no_kamar }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-12">
-                                <label for="status" class="form-label">Status Kamar</label>
-                                <select class="form-select" id="status" name="status">
-                                    <option selected disabled value>Pilih Status Kamar</option>
-                                    <option value="1"{{ $data->status == 'Ready' ? 'selected' : '' }}>Ready</option>
-                                    <option value="2"{{ $data->status == 'Booked' ? 'selected' : '' }}>Booked
-                                    </option>
-                                </select>
-                            </div>
+                        </div>
+                        {{-- SELECT PILIH KAMAR END --}}
+
+                        @foreach ($data->detailBayar as $item)
+                            @if ($item->status_bayar == 'Full Payment')
+                                <div class="col-6">
+                                    <label for="status_bayar" class="form-label">Pilih Status Bayar</label>
+                                    <select class="form-select mb-1" aria-label="Default select example"
+                                        name="status_bayar" id="status_bayar" disabled>
+                                        <option
+                                            value="1"{{ $item->status_bayar == 'Full Payment' ? 'selected' : '' }}>
+                                            Full Payment</option>
+                                        <option value="2"{{ $item->status_bayar == 'DP' ? 'selected' : '' }}>DP
+                                        </option>
+                                        <option value="3"{{ $item->status_bayar == 'Pelunasan' ? 'selected' : '' }}>
+                                            Pelunasan</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label for="harga" class="form-label">Total Harga</label>
+                                    <input type="number" class="form-control mb-1" id="harga" name="harga"
+                                        value="{{ $item->total_bayar }}" placeholder="" readonly>
+                                </div>
+                            @elseif ($item->status_bayar == 'DP' && is_string($item->status_bayar) && strlen($item->status_bayar) == 1)
+                                <div class="col-6">
+                                    <label for="status_bayar" class="form-label">Pilih Status Bayar</label>
+                                    <select class="form-select mb-1" aria-label="Default select example"
+                                        name="status_bayar" id="status_bayar" disabled>
+                                        <option
+                                            value="1"{{ $item->status_bayar == 'Full Payment' ? 'selected' : '' }}>
+                                            Full Payment</option>
+                                        <option value="2"{{ $item->status_bayar == 'DP' ? 'selected' : '' }}>DP
+                                        </option>
+                                        <option value="3"{{ $item->status_bayar == 'Pelunasan' ? 'selected' : '' }}>
+                                            Pelunasan</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label for="harga" class="form-label">Total Harga</label>
+                                    <input type="number" class="form-control mb-1" id="harga" name="harga"
+                                        value="{{ $item->total_bayar }}" placeholder="" readonly>
+                                </div>
+                                <div class="col-6 mt-2">
+                                    @php($pelunasan = $item->total_bayar * 4 - $item->total_bayar)
+                                    <input type="text" class="form-control mb-2" id="status_pelunasan"
+                                        name="status_pelunasan" value="Pelunasan" placeholder="" hidden>
+                                    <label for="pelunasan" class="form-label">Biaya Pelunasan</label>
+                                    <input type="number" class="form-control mb-2" id="pelunasan" name="pelunasan"
+                                        value="{{ $pelunasan }}" placeholder="" readonly>
+                                </div>
+                            @elseif (is_string($item->status_bayar) && strlen($item->status_bayar) > 1)
+                                <div class="col-6">
+                                    <label for="status_bayar" class="form-label">Pilih Status Bayar</label>
+                                    <select class="form-select mb-1" aria-label="Default select example"
+                                        name="status_bayar" id="status_bayar" disabled>
+                                        <option
+                                            value="1"{{ $item->status_bayar == 'Full Payment' ? 'selected' : '' }}>
+                                            Full Payment</option>
+                                        <option value="2"{{ $item->status_bayar == 'DP' ? 'selected' : '' }}>DP
+                                        </option>
+                                        <option value="3"{{ $item->status_bayar == 'Pelunasan' ? 'selected' : '' }}>
+                                            Pelunasan</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label for="harga" class="form-label">Total Harga</label>
+                                    <input type="number" class="form-control mb-1" id="harga" name="harga"
+                                        value="{{ $item->total_bayar }}" placeholder="" readonly>
+                                </div>
+                            @endif
+                        @endforeach
+
+                        <div class="col-12">
+                            <label for="status_booking" class="form-label">Status Kamar</label>
+                            <select class="form-select" id="status_booking" name="status_booking">
+                                <option value="1"{{ $data->status_booking == 'New' ? 'selected' : '' }}>New</option>
+                                <option value="2"{{ $data->status_booking == 'Booking' ? 'selected' : '' }}>Booking
+                                </option>
+                                <option value="3"{{ $data->status_booking == 'Check In' ? 'selected' : '' }}>Check In
+                                </option>
+                                <option value="4"{{ $data->status_booking == 'Check Out' ? 'selected' : '' }}>Check
+                                    Out</option>
+                                <option value="5"{{ $data->status_booking == 'Cancel' ? 'selected' : '' }}>Cancel
+                                </option>
+                            </select>
                         </div>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button> |
+                        <button type="submit" id="mainSubmitButton" class="btn btn-primary">Simpan</button> |
                         <button type="reset" class="btn btn-secondary">Reset</button>
                     </div>
+                </form>
             </div>
-            </form><!-- Vertical Form -->
             {{-- END --}}
         </div>
     @endif
 @endsection
+
 @section('sidebar')
     @include('sidebar-admin')
 @endsection
+
 @section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-
-            // $('.my-select').selectpicker();
 
             $.ajaxSetup({
                 headers: {
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 }
             });
+
+            // $('#filterData').click(function(e) {
+            //     e.preventDefault();
+            //     var start_date = $('#start_date').val();
+            //     var end_date = $('#end_date').val();
+
+            //     $.ajax({
+            //         url: "{{ route('kamarReady.filter') }}",
+            //         type: "POST",
+            //         data: {
+            //             start_date: start_date,
+            //             end_date: end_date
+            //         },
+            //         dataType: 'json',
+            //         success: function(response) {
+            //             if (response.status === 'success') {
+            //                 // Hapus opsi kamar yang ada
+            //                 $('#no_kamar').empty();
+            //                 // Tambahkan opsi kamar yang baru
+            //                 $.each(response.kamarReady, function(index, kamar) {
+            //                     $('<option value="' + kamar.no_kamar + '">' + kamar
+            //                         .no_kamar + '</option>').appendTo('#no_kamar');
+            //                 });
+            //             } else {
+            //                 // Menampilkan pesan error jika terjadi kesalahan
+            //                 alert('Error: ' + response.message);
+            //             }
+            //         },
+            //         error: function(xhr, status, error) {
+            //             alert('Error: ' + error);
+            //         }
+            //     });
+            // });
 
             $('#id_kategori').change(function() {
                 var idKategori = $(this).val();
@@ -195,8 +393,21 @@
                                 var totalHarga = hargaPerKamar * jumlahKamar *
                                     jumlahHari;
 
-                                // Set nilai total harga ke input harga
                                 $('#harga').val(totalHarga);
+
+                                $('#status_bayar').change(function() {
+                                    var statusBayar = $(this).val();
+                                    var lastHarga = 0;
+
+                                    if (statusBayar) {
+                                        if (statusBayar == 1) {
+                                            lastHarga = totalHarga;
+                                        } else if (statusBayar == 2) {
+                                            lastHarga = totalHarga / 4;
+                                        }
+                                    }
+                                    $('#harga').val(lastHarga);
+                                });
                             });
                         },
                         error: function() {
@@ -208,58 +419,6 @@
                 } else {
                     $('#no_kamar option').prop('disabled', false);
                 }
-
-                // Ambil elemen-elemen yang diperlukan
-                var kategoriSelect = document.getElementById('id_kategori');
-                var jumlahKamarInput = document.getElementById('jumlah_kamar');
-                var noKamarSelect = document.getElementById('no_kamar');
-
-                // Fungsi untuk mengubah opsi pada select no_kamar berdasarkan kategori yang dipilih
-                function updateNoKamarOptions() {
-                    var kategori = kategoriSelect.value;
-                    var jumlahKamar = jumlahKamarInput.value;
-                    var maxOptions = noKamarSelect.options.length;
-
-                    // Menghapus pesan error sebelumnya (jika ada)
-                    var errorElement = document.getElementById('error_message');
-                    if (errorElement) {
-                        errorElement.remove();
-                    }
-
-                    // Hapus semua opsi sebelumnya
-                    while (noKamarSelect.options.length > 0) {
-                        noKamarSelect.remove(0);
-                    }
-
-                    // Tambahkan opsi yang sesuai dengan kategori dan jumlah kamar yang dipilih
-                    var addedOptions = 0;
-                    @foreach ($kamar as $item)
-                        if (kategori === "{{ $item->id_kategori }}" && jumlahKamar > 0) {
-                            var option = document.createElement('option');
-                            option.value = "{{ $item->no_kamar }}";
-                            option.text = "{{ $item->no_kamar }}";
-                            noKamarSelect.add(option);
-                            jumlahKamar--;
-                            addedOptions++;
-                        }
-                    @endforeach
-
-                    // Tampilkan pesan error jika jumlah kamar yang diminta melebihi jumlah opsi yang tersedia
-                    if (jumlahKamar > 0 && addedOptions === 0) {
-                        var errorElement = document.getElementById('error_jumlah_kamar');
-                        errorElement.innerText =
-                            'Jumlah kamar yang diminta melebihi jumlah kamar yang tersedia.';
-                        jumlahKamarInput.classList.add('is-invalid');
-                    } else {
-                        var errorElement = document.getElementById('error_jumlah_kamar');
-                        errorElement.innerText = '';
-                        jumlahKamarInput.classList.remove('is-invalid');
-                    }
-                }
-                // Panggil fungsi updateNoKamarOptions saat kategori atau jumlah kamar berubah
-                kategoriSelect.addEventListener('change', updateNoKamarOptions);
-                jumlahKamarInput.addEventListener('input', updateNoKamarOptions);
-
             });
 
             $('#jumlah_hari, #start_date').change(function() {
@@ -294,6 +453,40 @@
                 }
             });
 
+            // $('#id_kategori, #filterData').on('change click', function() {
+            //     var idKategori = $('#id_kategori').val();
+            //     var start_date = $('#start_date').val();
+            //     var end_date = $('#end_date').val();
+
+            //     // Mengambil data kamar berdasarkan kategori dan tanggal
+            //     $.ajax({
+            //         url: "{{ route('get.kamar.by.kategori') }}",
+            //         type: "POST",
+            //         data: {
+            //             id_kategori: idKategori,
+            //             start_date: start_date,
+            //             end_date: end_date
+            //         },
+            //         dataType: 'json',
+            //         success: function(response) {
+            //             if (response.status === 'success') {
+            //                 // Hapus opsi kamar yang ada
+            //                 $('#no_kamar').empty();
+            //                 // Tambahkan opsi kamar yang baru
+            //                 $.each(response.kamarReady, function(index, kamar) {
+            //                     $('<option value="' + kamar.no_kamar + '">' + kamar
+            //                         .no_kamar + '</option>').appendTo('#no_kamar');
+            //                 });
+            //             } else {
+            //                 // Menampilkan pesan error jika terjadi kesalahan
+            //                 alert('Error: ' + response.message);
+            //             }
+            //         },
+            //         error: function(xhr, status, error) {
+            //             alert('Error: ' + error);
+            //         }
+            //     });
+            // });
 
         });
     </script>

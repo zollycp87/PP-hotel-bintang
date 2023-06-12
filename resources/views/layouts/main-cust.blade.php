@@ -107,7 +107,7 @@
     </footer>
     <!-- End Footer-->
 
-
+    @yield('scripts')
     <!-- javascript files-->
     <!-- jquery-->
     <script src="{{ asset('customer/assets/js/jquery.min.js') }}"></script>

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('alamat')->nullable();
             $table->string('no_hp')->nullable();
             $table->enum('jenis_kelamin',['Laki-laki','Perempuan'])->nullable();
-            $table->enum('status_cust',['Register', 'Unregister']);
+            $table->enum('status_cust',['Online', 'Offline']);
             $table->timestamps();
         });
     }

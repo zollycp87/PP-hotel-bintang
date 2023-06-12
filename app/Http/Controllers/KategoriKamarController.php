@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
+use App\Models\Kamar;
 use NumberFormatter;
 use App\Models\KategoriKamar;
+use Carbon\Carbon;
 // use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -16,8 +19,46 @@ class KategoriKamarController extends Controller
      */
     public function index()
     {
-        $posts = KategoriKamar::orderby('id_kategori', 'asc')->get();
-        return view('admin.kelola-kategori', ['posts' => $posts]);
+        $posts = KategoriKamar::orderBy('id_kategori', 'asc')->get();
+        $kamars = Kamar::with('kategori')->orderby('no_kamar', 'asc')->get();
+        $today = Carbon::now()->toDateString();
+        $statusKamar = [];
+
+        // Pengecekan jika database masih kosong
+        if ($kamars->count() === 0) {
+            return view('admin.kelola-kategori', compact('posts')); // Ganti dengan route yang sesuai
+        }
+
+        foreach ($kamars as $post) {
+            $booking = Booking::where('start_date', '<=', $today)
+                ->where('end_date', '>=', $today)
+                ->whereHas('detail', function ($query) use ($post) {
+                    $query->where('no_kamar', $post->no_kamar);
+                })
+                ->first();
+
+            if ($booking) {
+                $statusKamar[$post->no_kamar] = 'Booked';
+            } else {
+                $statusKamar[$post->no_kamar] = 'Ready';
+                if (!isset($jumlahKamarReady[$post->kategori->id_kategori])) {
+                    $jumlahKamarReady[$post->kategori->id_kategori] = 1;
+                    $kategoriKamar[] = $post->kategori->id_kategori;
+                } else {
+                    $jumlahKamarReady[$post->kategori->id_kategori]++;
+                }
+            }
+        }
+
+        // Cek kategori yang tidak memiliki kamar ready
+        $kategoriTidakReady = KategoriKamar::whereNotIn('id_kategori', $kategoriKamar)->get();
+
+        // Tambahkan kategori yang tidak memiliki kamar ready ke dalam array $jumlahKamarReady
+        foreach ($kategoriTidakReady as $kategori) {
+            $jumlahKamarReady[$kategori->id_kategori] = 0;
+        }
+
+        return view('admin.kelola-kategori', compact('posts', 'statusKamar', 'jumlahKamarReady'));
     }
 
     /**
@@ -61,6 +102,7 @@ class KategoriKamarController extends Controller
             'img' => $image_name
         ];
         KategoriKamar::create($data);
+        $jumlahKamarReady = [];
         return redirect('admin/kelola-kategori')->with('success', 'Berhasil Menambahkan Data');
     }
 

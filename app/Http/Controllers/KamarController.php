@@ -9,6 +9,7 @@ use App\Models\KategoriKamar;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KamarController extends Controller
 {
@@ -21,9 +22,15 @@ class KamarController extends Controller
         $today = Carbon::now()->toDateString();
         $statusKamar = [];
 
+        if ($posts->count() === 0) {
+            $jumlahKamarReady = [];
+            return view('admin.kelola-kamar', compact('posts', 'statusKamar', 'jumlahKamarReady'));
+        }
+
         foreach ($posts as $post) {
             $booking = Booking::where('start_date', '<=', $today)
                 ->where('end_date', '>=', $today)
+                ->whereIn('status_booking', ['Check In','Booking'])
                 ->whereHas('detail', function ($query) use ($post) {
                     $query->where('no_kamar', $post->no_kamar);
                 })
@@ -33,10 +40,24 @@ class KamarController extends Controller
                 $statusKamar[$post->no_kamar] = 'Booked';
             } else {
                 $statusKamar[$post->no_kamar] = 'Ready';
+                if (!isset($jumlahKamarReady[$post->kategori->id_kategori])) {
+                    $jumlahKamarReady[$post->kategori->id_kategori] = 1;
+                    $kategoriKamar[] = $post->kategori->id_kategori;
+                } else {
+                    $jumlahKamarReady[$post->kategori->id_kategori]++;
+                }
             }
         }
 
-        return view('admin.kelola-kamar', compact('posts', 'statusKamar'));
+        // Cek kategori yang tidak memiliki kamar ready
+        $kategoriTidakReady = KategoriKamar::whereNotIn('id_kategori', $kategoriKamar)->get();
+
+        // Tambahkan kategori yang tidak memiliki kamar ready ke dalam array $jumlahKamarReady
+        foreach ($kategoriTidakReady as $kategori) {
+            $jumlahKamarReady[$kategori->id_kategori] = 0;
+        }
+
+        return view('admin.kelola-kamar', compact('posts', 'statusKamar', 'jumlahKamarReady'));
     }
 
     /**
@@ -63,7 +84,6 @@ class KamarController extends Controller
             'id_kategori' => $id_kategori,
             'no_kamar' => $no_kamar,
             'status' => $request->status,
-
         ];
         Kamar::create($data);
         return redirect('admin/kelola-kamar')->with('success', 'Berhasil Menambahkan Data');
@@ -137,19 +157,39 @@ class KamarController extends Controller
             ->get();
 
         $statusKamar = [];
+        $jumlahKamarReady = [];
 
         foreach ($bookings as $booking) {
             $detailBookings = DetailBooking::where('invoice', $booking->invoice)->get();
             foreach ($detailBookings as $detailBooking) {
-                if ($booking->status == 'check out' || $booking->status == 'cancel') {
-                    $statusKamar[$detailBooking->no_kamar] = 'Ready';
-                } else {
+                if ($booking->status_booking == 'Check In' || $booking->status_booking == 'Booking') {
                     $statusKamar[$detailBooking->no_kamar] = 'Booked';
+                } else {
+                    $statusKamar[$detailBooking->no_kamar] = 'Ready';
                 }
             }
         }
 
+        // Mengambil kamar yang berstatus "ready"
+        $kamarReady = Kamar::whereNotIn('no_kamar', array_keys($statusKamar))->get();
+
+        // Menghitung jumlah kamar yang ready
+        $jumlahKamarReady = Kamar::whereNotIn('no_kamar', array_keys($statusKamar))
+            ->select('id_kategori', DB::raw('count(*) as jumlah_kamar_ready'))
+            ->groupBy('id_kategori')
+            ->get()
+            ->pluck('jumlah_kamar_ready', 'id_kategori');
+
+        // Mengambil semua kategori kamar
+        $kategoriKamar = KategoriKamar::pluck('id_kategori')->toArray();
+        // Menambahkan kategori yang tidak memiliki kamar ready
+        foreach ($kategoriKamar as $kategori) {
+            if (!isset($jumlahKamarReady[$kategori])) {
+                $jumlahKamarReady[$kategori] = 0;
+            }
+        }
+
         // Mengirimkan data ke tampilan
-        return view('admin.kelola-kamar', compact('posts', 'statusKamar'));
+        return view('admin.kelola-kamar', compact('posts', 'statusKamar', 'jumlahKamarReady'));
     }
 }

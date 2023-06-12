@@ -14,7 +14,40 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-between">
-                <h5 class="card-title d-flex justify-content-start">Data Customer</h5>
+                    <div class="col-6">
+                        <h5 class="card-title d-flex justify-content-start">Data Customer</h5>
+                    </div>
+                    <div class="col-6 d-flex align-items-center justify-content-end">
+                        <form action="{{ route('customer.filter') }}" method="post">
+                            @csrf
+                            <div class="row mt-3 mb-3">
+                                <div class="col-8">
+                                    {{-- <label for="booking-date" class="form-label">Filter Tanggal</label> --}}
+                                    @if (Route::currentRouteName() == 'customer.filter')
+                                        <input type="date"
+                                            class="form-control mb-1 @error('booking-date') is-invalid @enderror"
+                                            id="booking-date" name="booking-date" value="{{ $bookingDate }}"
+                                            placeholder="">
+                                        @error('booking-date')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    @else
+                                        <input type="date"
+                                            class="form-control mb-1 @error('booking-date') is-invalid @enderror"
+                                            id="booking-date" name="booking-date"
+                                            value="{{ Carbon\Carbon::now()->format('Y-m-d') }}" placeholder="">
+                                        @error('booking-date')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    @endif
+                                </div>
+                                <div class="col-4 d-flex align-items-center">
+                                    <button type="submit" class="btn btn-primary"><i
+                                    class="bi bi-funnel me-1"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 {{-- <h5 class="card-title d-flex justify-content-end">
                     <a href="{{ route('kelola-user.create') }}" type="button" class="btn btn-primary"><i
                             class="bi bi-plus me-1"></i> Tambah Data</a>
@@ -46,7 +79,7 @@
                             <td>{{ $item->no_hp }}</td>
                             <td>{{ $item->jenis_kelamin }}</td>
                             <td>
-                                @if ($item->status_cust == 'Register')
+                                @if ($item->status_cust == 'Online')
                                     <span class="badge rounded-pill bg-success">{{ $item->status_cust }}</span>
                                 @else
                                     <span class="badge rounded-pill bg-danger">{{ $item->status_cust }}</span>
@@ -55,7 +88,7 @@
                         </tr>
                     @empty
                         <div class="alert alert-danger">
-                            Data Post belum Tersedia.
+                            Data Belum Tersedia.
                         </div>
                     @endforelse
                 </tbody>

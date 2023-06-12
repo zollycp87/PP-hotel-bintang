@@ -20,15 +20,19 @@ class Booking extends Model
         'tanggal_pesan',
         'start_date',
         'end_date',
+        'id_user',
         'id_customer',
-        'total_bayar',
-        'nomor_kamar',
         'status_booking'
     ];
 
     public function detail()
     {
         return $this->hasMany(DetailBooking::class, 'invoice');
+    }
+    
+    public function detailBayar()
+    {
+        return $this->hasMany(DetailBayar::class, 'invoice');
     }
 
     public function customer()

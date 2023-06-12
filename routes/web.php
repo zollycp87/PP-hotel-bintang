@@ -3,11 +3,13 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HitungController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\KategoriKamarController;
 use App\Http\Controllers\UserController;
 use App\Models\Kamar;
+use App\Models\KategoriKamar;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,11 +27,10 @@ use Illuminate\Support\Facades\Route;
 //     return view('cust.landing-page');
 // });
 Route::get('/', [CustomerController::class, 'indexCust'])->name('landing-page');
+Route::get('/kategori-list', [CustomerController::class, 'kategoriList'])->name('kategori-list');
 
 Route::prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin-dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin-dashboard');
 
     // Kelola User
     Route::get('/kelola-user', function () {
@@ -42,6 +43,8 @@ Route::prefix('admin')->group(function () {
 
     //Kelola Customer
     Route::resource('/kelola-customer', CustomerController::class);
+    Route::post('/customer/filter', [CustomerController::class, 'filterCustomer'])->name('customer.filter');
+
     //END
 
     // Kelola Kategori
@@ -68,15 +71,27 @@ Route::prefix('admin')->group(function () {
     //Kelola Booking
     Route::resource('/booking', BookingController::class);
     Route::get('/get-harga/{idKategori}', [BookingController::class, 'getHarga'])->name('get.harga');
+    Route::post('/booking/filter', [BookingController::class, 'filterBooking'])->name('booking.filter');
+    Route::post('/booking/filterkamar', [BookingController::class, 'kamarReadyFilter'])->name('kamarReady.filter');
+    Route::post('/get-kamar-by-kategori', [BookingController::class, 'getKamarByKategori'])->name('get.kamar.by.kategori');
+
     //END
 });
 
 //ROLE-CUSTOMER
 Route::prefix('cust')->group(function () {
     Route::get('/landing-page', function () {
-        return view('cust.landing-page');
-    });
-    Route::get('/profilx/{cust}', [CustomerController::class, 'editProfile'])->name('edit-profile')->middleware('auth');
+        $kategoris = KategoriKamar::limit(3)->get();
+        return view('cust.landing-page', compact('kategoris'));
+    })->name('cust.landing-page');
+
+
+    Route::get('/profile', function () {
+        return view('cust.profile');
+    })->name('cust-profile');
+    
+    Route::get('/booking', [BookingController::class, 'bookingCust'])->name('cust-booking');
+    Route::get('/get-harga/{idKategori}', [BookingController::class, 'getHargaCust'])->name('get.hargaCust');
 });
 
 //Login
@@ -90,5 +105,3 @@ Route::post('/register/store', [AuthController::class, 'store'])->name('register
 //Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-//Proses hitung
-Route::post('/cust/landing-page', [HitungController::class, 'calculatePrice'])->name('calculate-price');
