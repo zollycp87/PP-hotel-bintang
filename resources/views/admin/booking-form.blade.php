@@ -80,8 +80,8 @@
                                     id="no_kamar" multiple size="">
                                     {{-- <option disabled selected>Pilih No Kamar</option> --}}
                                     @foreach ($kamar as $item)
-                                        <option value="{{ $item->no_kamar }}" data-kategori="{{ $item->id_kategori }}"
-                                            data-kamar="{{ $item->no_kamar }}">
+                                        <option selected value="{{ $item->no_kamar }}"
+                                            data-kategori="{{ $item->id_kategori }}" data-kamar="{{ $item->no_kamar }}">
                                             {{ $item->no_kamar }}
                                         </option>
                                     @endforeach
@@ -175,14 +175,12 @@
                             <select class="form-select mb-1" aria-label="Default select example" name="id_kategori"
                                 id="id_kategori" disabled>
                                 <option selected value>
-                                    @foreach ($details->groupBy('id_kategori') as $kategoris => $detailsByKategori)
-                                        {{ $kategoris }}
+                                    @foreach ($details->groupBy('id_kategori') as $idKategori => $detailsByKategori)
+                                        @foreach ($detailsByKategori->unique('id_kategori') as $detail)
+                                            {{ \App\Models\KategoriKamar::find($idKategori)->nama_kategori }}
+                                        @endforeach
                                     @endforeach
                                 </option>
-                                @foreach ($kategori as $item)
-                                    <option value="{{ $item->id_kategori }}" data-harga="{{ $item->harga }}">
-                                        {{ $item->nama_kategori }}</option>
-                                @endforeach
                             </select>
                         </div>
 
@@ -214,8 +212,8 @@
                         </div>
                         {{-- SELECT PILIH KAMAR END --}}
 
-                        @foreach ($data->detailBayar as $item)
-                            @if ($item->status_bayar == 'Full Payment')
+                        @if (count($data->detailBayar) == 1)
+                            @foreach ($data->detailBayar as $item)
                                 <div class="col-6">
                                     <label for="status_bayar" class="form-label">Pilih Status Bayar</label>
                                     <select class="form-select mb-1" aria-label="Default select example"
@@ -234,7 +232,19 @@
                                     <input type="number" class="form-control mb-1" id="harga" name="harga"
                                         value="{{ $item->total_bayar }}" placeholder="" readonly>
                                 </div>
-                            @elseif ($item->status_bayar == 'DP' && is_string($item->status_bayar) && strlen($item->status_bayar) == 1)
+                                @if ($item->status_bayar == 'DP')
+                                    <div class="col-6 mt-2">
+                                        @php($pelunasan = $item->total_bayar * 4 - $item->total_bayar)
+                                        <input type="text" class="form-control mb-2" id="status_pelunasan"
+                                            name="status_pelunasan" value="Pelunasan" placeholder="" hidden>
+                                        <label for="pelunasan" class="form-label">Biaya Pelunasan</label>
+                                        <input type="number" class="form-control mb-2" id="pelunasan" name="pelunasan"
+                                            value="{{ $pelunasan }}" placeholder="" readonly>
+                                    </div>
+                                @endif
+                            @endforeach
+                        @else
+                            @foreach ($data->detailBayar as $item)
                                 <div class="col-6">
                                     <label for="status_bayar" class="form-label">Pilih Status Bayar</label>
                                     <select class="form-select mb-1" aria-label="Default select example"
@@ -253,45 +263,23 @@
                                     <input type="number" class="form-control mb-1" id="harga" name="harga"
                                         value="{{ $item->total_bayar }}" placeholder="" readonly>
                                 </div>
-                                <div class="col-6 mt-2">
-                                    @php($pelunasan = $item->total_bayar * 4 - $item->total_bayar)
-                                    <input type="text" class="form-control mb-2" id="status_pelunasan"
-                                        name="status_pelunasan" value="Pelunasan" placeholder="" hidden>
-                                    <label for="pelunasan" class="form-label">Biaya Pelunasan</label>
-                                    <input type="number" class="form-control mb-2" id="pelunasan" name="pelunasan"
-                                        value="{{ $pelunasan }}" placeholder="" readonly>
-                                </div>
-                            @elseif (is_string($item->status_bayar) && strlen($item->status_bayar) > 1)
-                                <div class="col-6">
-                                    <label for="status_bayar" class="form-label">Pilih Status Bayar</label>
-                                    <select class="form-select mb-1" aria-label="Default select example"
-                                        name="status_bayar" id="status_bayar" disabled>
-                                        <option
-                                            value="1"{{ $item->status_bayar == 'Full Payment' ? 'selected' : '' }}>
-                                            Full Payment</option>
-                                        <option value="2"{{ $item->status_bayar == 'DP' ? 'selected' : '' }}>DP
-                                        </option>
-                                        <option value="3"{{ $item->status_bayar == 'Pelunasan' ? 'selected' : '' }}>
-                                            Pelunasan</option>
-                                    </select>
-                                </div>
-                                <div class="col-6">
-                                    <label for="harga" class="form-label">Total Harga</label>
-                                    <input type="number" class="form-control mb-1" id="harga" name="harga"
-                                        value="{{ $item->total_bayar }}" placeholder="" readonly>
-                                </div>
-                            @endif
-                        @endforeach
+                            @endforeach
+                        @endif
+
 
                         <div class="col-12">
                             <label for="status_booking" class="form-label">Status Kamar</label>
                             <select class="form-select" id="status_booking" name="status_booking">
-                                <option value="1"{{ $data->status_booking == 'New' ? 'selected' : '' }}>New</option>
-                                <option value="2"{{ $data->status_booking == 'Booking' ? 'selected' : '' }}>Booking
+                                <option value="1"{{ $data->status_booking == 'New' ? 'selected' : '' }}>New
                                 </option>
-                                <option value="3"{{ $data->status_booking == 'Check In' ? 'selected' : '' }}>Check In
+                                <option value="2"{{ $data->status_booking == 'Booking' ? 'selected' : '' }}>
+                                    Booking
                                 </option>
-                                <option value="4"{{ $data->status_booking == 'Check Out' ? 'selected' : '' }}>Check
+                                <option value="3"{{ $data->status_booking == 'Check In' ? 'selected' : '' }}>
+                                    Check In
+                                </option>
+                                <option value="4"{{ $data->status_booking == 'Check Out' ? 'selected' : '' }}>
+                                    Check
                                     Out</option>
                                 <option value="5"{{ $data->status_booking == 'Cancel' ? 'selected' : '' }}>Cancel
                                 </option>
@@ -323,39 +311,6 @@
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 }
             });
-
-            // $('#filterData').click(function(e) {
-            //     e.preventDefault();
-            //     var start_date = $('#start_date').val();
-            //     var end_date = $('#end_date').val();
-
-            //     $.ajax({
-            //         url: "{{ route('kamarReady.filter') }}",
-            //         type: "POST",
-            //         data: {
-            //             start_date: start_date,
-            //             end_date: end_date
-            //         },
-            //         dataType: 'json',
-            //         success: function(response) {
-            //             if (response.status === 'success') {
-            //                 // Hapus opsi kamar yang ada
-            //                 $('#no_kamar').empty();
-            //                 // Tambahkan opsi kamar yang baru
-            //                 $.each(response.kamarReady, function(index, kamar) {
-            //                     $('<option value="' + kamar.no_kamar + '">' + kamar
-            //                         .no_kamar + '</option>').appendTo('#no_kamar');
-            //                 });
-            //             } else {
-            //                 // Menampilkan pesan error jika terjadi kesalahan
-            //                 alert('Error: ' + response.message);
-            //             }
-            //         },
-            //         error: function(xhr, status, error) {
-            //             alert('Error: ' + error);
-            //         }
-            //     });
-            // });
 
             $('#id_kategori').change(function() {
                 var idKategori = $(this).val();
@@ -453,41 +408,61 @@
                 }
             });
 
-            // $('#id_kategori, #filterData').on('change click', function() {
-            //     var idKategori = $('#id_kategori').val();
-            //     var start_date = $('#start_date').val();
-            //     var end_date = $('#end_date').val();
+            $('#start_date, #end_date, #id_kategori, #jumlah_kamar').change(function() {
+                var startDate = $('#start_date').val();
+                var endDate = $('#end_date').val();
+                var idKategori = $('#id_kategori').val();
+                var jumlahKamar = $('#jumlah_kamar').val();
 
-            //     // Mengambil data kamar berdasarkan kategori dan tanggal
-            //     $.ajax({
-            //         url: "{{ route('get.kamar.by.kategori') }}",
-            //         type: "POST",
-            //         data: {
-            //             id_kategori: idKategori,
-            //             start_date: start_date,
-            //             end_date: end_date
-            //         },
-            //         dataType: 'json',
-            //         success: function(response) {
-            //             if (response.status === 'success') {
-            //                 // Hapus opsi kamar yang ada
-            //                 $('#no_kamar').empty();
-            //                 // Tambahkan opsi kamar yang baru
-            //                 $.each(response.kamarReady, function(index, kamar) {
-            //                     $('<option value="' + kamar.no_kamar + '">' + kamar
-            //                         .no_kamar + '</option>').appendTo('#no_kamar');
-            //                 });
-            //             } else {
-            //                 // Menampilkan pesan error jika terjadi kesalahan
-            //                 alert('Error: ' + response.message);
-            //             }
-            //         },
-            //         error: function(xhr, status, error) {
-            //             alert('Error: ' + error);
-            //         }
-            //     });
-            // });
+                if (startDate && endDate && idKategori) {
+                    // Menghitung lama hari berdasarkan tanggal mulai dan tanggal akhir
+                    var start = new Date(startDate);
+                    var end = new Date(endDate);
+                    // var diff = Math.floor((end - start) / (1000 * 60 * 60 * 24));
 
+                    // // Mengatur nilai input jumlah_hari
+                    // $('#jumlah_hari').val(diff);
+
+                    // Mengambil jumlah kamar yang tersedia berdasarkan id_kategori
+                    $.ajax({
+                        url: '/cust/get-available-rooms',
+                        method: 'POST',
+                        data: {
+                            start_date: startDate,
+                            end_date: endDate,
+                            id_kategori: idKategori
+                        },
+                        success: function(response) {
+                            // Menampilkan jumlah kamar yang tersedia
+                            var jumlahKamarReady = response.jumlah_kamar_ready;
+                            $('#kamarReady').val(jumlahKamarReady);
+
+                            // Menampilkan opsi kamar tersedia
+                            var kamarTersedia = response.kamar_tersedia;
+                            var selectNoKamar = $('#no_kamar');
+                            selectNoKamar.empty();
+                            var jumlahKamar = parseInt($('#jumlah_kamar').val());
+
+                            // Memastikan jumlah opsi yang sesuai dengan jumlah_kamar yang diinputkan
+                            for (var noKamar in kamarTersedia) {
+                                var namaKamar = kamarTersedia[noKamar];
+                                var option = $('<option>').val(noKamar).text(noKamar);
+                                selectNoKamar.append(option);
+                            }
+
+                            // Memastikan jumlah opsi yang terpilih sesuai dengan jumlah_kamar yang diinputkan
+                            selectNoKamar.find('option').slice(0, jumlahKamar).prop('selected',
+                                true);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                        }
+                    });
+                } else {
+                    // Reset the value of kamarReady input when any of the required fields is empty
+                    $('#kamarReady').val('Kosong');
+                }
+            });
         });
     </script>
 @endsection

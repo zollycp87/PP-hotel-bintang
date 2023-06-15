@@ -13,16 +13,20 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
 class BookingController extends Controller
 {
-    public function index() //Admin
+    public function index() //Halaman Admin
     {
         $today = Carbon::now()->toDateString();
         $posts = Booking::with('detail', 'customer', 'detailBayar')
             ->whereDate('tanggal_pesan', $today)
-            ->where('id_user', Auth::user()->id_user)
+            ->where(function ($query) {
+                $query->where('id_user', Auth::user()->id_user)
+                    ->orWhere('id_user', 'like', '%C%');
+            })
             ->orderBy('tanggal_pesan', 'desc')
             ->get();
 
@@ -45,7 +49,7 @@ class BookingController extends Controller
         return view('admin.kelola-booking', compact('posts', 'details'));
     }
 
-    public function bookingCust() //Customer
+    public function bookingCust() //Halaman Customer
     {
         $invoice = Booking::invoice();
         $id_customer = User::id('booking.create');
@@ -93,7 +97,6 @@ class BookingController extends Controller
 
             DetailBayar::create($detail_bayar);
             Booking::where('invoice', $id)->update($data);
-
         } else {
             $data = [
                 'status_booking' => $request->input('status_booking'),
@@ -121,82 +124,156 @@ class BookingController extends Controller
         return response()->json(['harga' => $harga]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request) //Menambah Booking
     {
-        $request->validate([
-            'nama' => 'required',
-            'jumlah_kamar' => ['required', function ($attribute, $value, $fail) use ($request) {
-                $jumlahKamarInput = (int) $value;
-                $jumlahKamarArray = count($request->no_kamar);
-                if ($jumlahKamarInput !== $jumlahKamarArray) {
-                    $fail('Jumlah kamar tidak sesuai');
-                }
-            }],
-            'jumlah_hari' => 'required|min:1',
-            'start_date' => 'required|date|after_or_equal:' . Carbon::today()->format('Y-m-d'),
-            'status_bayar' => 'required|in:1,2'
-        ], [
-            'nama.required' => 'Nama wajib diisi',
-            'jumlah_kamar.required' => 'Jumlah kamar wajib diisi',
-            'jumlah_hari.required' => 'Lama hari wajib diisi',
-            'start_date.required' => 'Tanggal mulai wajib diisi',
-            'jumlah_kamar.check_kamar_count' => 'Jumlah kamar tidak sesuai',
-            'jumlah_hari.min' => 'Lama hari tidak valid',
-            'start_date.date' => 'Tanggal mulai tidak valid',
-            'start_date.after_or_equal' => 'Tanggal mulai tidak valid',
-            'status_bayar.required' => 'Status bayar wajib diisi',
-            'status_bayar.in' => 'Status bayar tidak valid',
-        ]);
+        if (Auth::user()->role === "Admin" || Auth::user()->role === "Super Admin") {
+            $request->validate([
+                'nama' => 'required',
+                'jumlah_kamar' => ['required', function ($attribute, $value, $fail) use ($request) {
+                    $jumlahKamarInput = (int) $value;
+                    $jumlahKamarArray = count($request->no_kamar);
+                    if ($jumlahKamarInput !== $jumlahKamarArray) {
+                        $fail('Jumlah kamar tidak sesuai');
+                    }
+                }],
+                'jumlah_hari' => 'required|min:1',
+                'start_date' => 'required|date|after_or_equal:' . Carbon::today()->format('Y-m-d'),
+                'status_bayar' => 'required|in:1,2'
+            ], [
+                'nama.required' => 'Nama wajib diisi',
+                'jumlah_kamar.required' => 'Jumlah kamar wajib diisi',
+                'jumlah_hari.required' => 'Lama hari wajib diisi',
+                'start_date.required' => 'Tanggal mulai wajib diisi',
+                'jumlah_kamar.check_kamar_count' => 'Jumlah kamar tidak sesuai',
+                'jumlah_hari.min' => 'Lama hari tidak valid',
+                'start_date.date' => 'Tanggal mulai tidak valid',
+                'start_date.after_or_equal' => 'Tanggal mulai tidak valid',
+                'status_bayar.required' => 'Status bayar wajib diisi',
+                'status_bayar.in' => 'Status bayar tidak valid',
+            ]);
 
-        Validator::extend('check_kamar_count', function ($attribute, $value, $parameters, $validator) {
-            $no_kamar = $validator->getData()['no_kamar'];
-            $jumlah_kamar = count($no_kamar);
-            return $value == $jumlah_kamar;
-        });
+            Validator::extend('check_kamar_count', function ($attribute, $value, $parameters, $validator) {
+                $no_kamar = $validator->getData()['no_kamar'];
+                $jumlah_kamar = count($no_kamar);
+                return $value == $jumlah_kamar;
+            });
 
-        $tanggal_pesan = Carbon::today()->format('Y-m-d');
+            $tanggal_pesan = Carbon::today()->format('Y-m-d');
 
-        $customer = [
-            'id_customer' => $request->input('id_customer'),
-            'id_user' => "-",
-            'nama' => $request->input('nama'),
-            'status_cust' => $request->input('status')
-        ];
+            $customer = [
+                'id_customer' => $request->input('id_customer'),
+                'id_user' => "-",
+                'nama' => $request->input('nama'),
+                'status_cust' => $request->input('status')
+            ];
 
-        $booking = [
-            'invoice' => $request->input('invoice'),
-            'tanggal_pesan' => $tanggal_pesan,
-            'start_date' => $request->input('start_date'),
-            'end_date' => $request->input('end_date'),
-            'id_user' => $request->input('id_user'),
-            'id_customer' => $request->input('id_customer'),
-            'status_booking' => $request->input('status_booking'),
-        ];
+            $booking = [
+                'invoice' => $request->input('invoice'),
+                'tanggal_pesan' => $tanggal_pesan,
+                'start_date' => $request->input('start_date'),
+                'end_date' => $request->input('end_date'),
+                'id_user' => $request->input('id_user'),
+                'id_customer' => $request->input('id_customer'),
+                'status_booking' => $request->input('status_booking'),
+            ];
 
-        $detail_bayar = [
-            'invoice' => $request->input('invoice'),
-            'tanggal_bayar' => $tanggal_pesan,
-            'total_bayar' => $request->input('harga'),
-            'status_bayar' => $request->input('status_bayar'),
-        ];
+            $detail_bayar = [
+                'invoice' => $request->input('invoice'),
+                'tanggal_bayar' => $tanggal_pesan,
+                'total_bayar' => $request->input('harga'),
+                'status_bayar' => $request->input('status_bayar'),
+            ];
 
-        Customer::create($customer);
-        Booking::create($booking);
-        DetailBayar::create($detail_bayar);
+            Customer::create($customer);
+            Booking::create($booking);
+            DetailBayar::create($detail_bayar);
 
-        $invoice = $request->input('invoice');
-        $idKategori = $request->input('id_kategori');
-        $noKamarArray = $request->input('no_kamar');
+            $invoice = $request->input('invoice');
+            $idKategori = $request->input('id_kategori');
+            $noKamarArray = $request->input('no_kamar');
 
-        foreach ($noKamarArray as $noKamar) {
-            $detailBooking = new DetailBooking();
-            $detailBooking->invoice = $invoice;
-            $detailBooking->id_kategori = $idKategori;
-            $detailBooking->no_kamar = $noKamar;
-            $detailBooking->save();
+            foreach ($noKamarArray as $noKamar) {
+                $detailBooking = new DetailBooking();
+                $detailBooking->invoice = $invoice;
+                $detailBooking->id_kategori = $idKategori;
+                $detailBooking->no_kamar = $noKamar;
+                $detailBooking->save();
+            }
+            // dd($detail_booking);
+            return redirect('admin/booking')->with('success', 'Berhasil Menambahkan Pesanan');
+        } else if (Auth::user()->role === "Tamu") {
+            $request->validate([
+                'nama' => 'required',
+                'jumlah_kamar' => ['required', function ($attribute, $value, $fail) use ($request) {
+                    $jumlahKamarInput = (int) $value;
+                    $kamarReady = (int) $request->input('kamarReady');
+                    if ($jumlahKamarInput > $kamarReady) {
+                        $fail('Jumlah kamar melebihi jumlah kamar yang tersedia');
+                    }
+                }],
+                'jumlah_kamar' => 'required|min:1',
+                'jumlah_hari' => 'required|min:1',
+                'start_date' => 'required|date|after_or_equal:' . Carbon::today()->format('Y-m-d'),
+            ], [
+                'nama.required' => 'Nama wajib diisi',
+                'jumlah_kamar.required' => 'Jumlah kamar wajib diisi',
+                'jumlah_hari.required' => 'Lama hari wajib diisi',
+                'start_date.required' => 'Tanggal mulai wajib diisi',
+                // 'jumlah_kamar.check_kamar_count' => 'Jumlah kamar tidak sesuai',
+                'jumlah_kamar.min' => 'Jumlah kamar tidak valid',
+                'jumlah_hari.min' => 'Lama hari tidak valid',
+                'start_date.date' => 'Tanggal mulai tidak valid',
+                'start_date.after_or_equal' => 'Tanggal mulai tidak valid',
+            ]);
+
+            $tanggal_pesan = Carbon::today()->format('Y-m-d');
+            $invoice = $request->input('invoice');
+            $idKategori = $request->input('id_kategori');
+            $noKamarArray = $request->input('no_kamar');
+
+            $booking = [
+                'invoice' => $invoice,
+                'tanggal_pesan' => $tanggal_pesan,
+                'start_date' => $request->input('start_date'),
+                'end_date' => $request->input('end_date'),
+                'id_user' => $request->input('id_customer'),
+                'id_customer' => $request->input('id_customer'),
+                'status_booking' => $request->input('status_booking'),
+            ];
+
+            $detail_bayar = [
+                'invoice' => $request->input('invoice'),
+                'tanggal_bayar' => $tanggal_pesan,
+                'total_bayar' => $request->input('harga'),
+                'status_bayar' => $request->input('status_bayar'),
+            ];
+            // dd($booking);
+
+            Booking::create($booking);
+            DetailBayar::create($detail_bayar);
+
+            foreach ($noKamarArray as $noKamar) {
+                $detailBooking = new DetailBooking();
+                $detailBooking->invoice = $invoice;
+                $detailBooking->id_kategori = $idKategori;
+                $detailBooking->no_kamar = $noKamar;
+                $detailBooking->save();
+            }
+
+            // Mengambil semua data booking berdasarkan invoice
+            $bookings = Booking::where('invoice', $invoice)->first();
+            $details = DetailBooking::with('kategori')
+                ->select('invoice', 'id_kategori')
+                ->selectRaw('COUNT(DISTINCT no_kamar) AS jumlah_kamar')
+                ->groupBy('invoice', 'id_kategori')
+                ->get();
+
+            return view('cust.invoice')->with([
+                'bookings' => $bookings,
+                'details' => $details,
+                'success' => 'Berhasil Menambahkan Pesanan'
+            ]);
         }
-        // dd($detail_booking);
-        return redirect('admin/booking')->with('success', 'Berhasil Menambahkan Pesanan');
     }
 
     public function filterBooking(Request $request)
@@ -218,75 +295,50 @@ class BookingController extends Controller
         return view('admin.kelola-booking', compact('posts', 'details', 'bookingDate'));
     }
 
-    // public function kamarReadyFilter(Request $request)
-    // {
-    //     $posts = Kamar::with('kategori')->orderby('no_kamar', 'asc')->get();
-    //     $request->validate([
-    //         'start_date' => 'required|date|after_or_equal:' . Carbon::today()->format('Y-m-d'),
-    //     ], [
-    //         'start_date.after_or_equal' => 'Tanggal mulai tidak valid'
-    //     ]);
+    public function getAvailableRooms(Request $request)
+    {
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+        $id_kategori = $request->input('id_kategori');
 
-    //     $start_date = $request->input('start_date');
-    //     $end_date = $request->input('end_date');
+        $bookings = Booking::whereBetween('start_date', [$start_date, $end_date])
+            ->orWhereBetween('end_date', [$start_date, $end_date])
+            ->orWhere(function ($query) use ($start_date, $end_date) {
+                $query->where('start_date', '<', $start_date)
+                    ->where('end_date', '>', $end_date);
+            })
+            ->get();
 
-    //     $bookings = Booking::where(function ($query) use ($start_date, $end_date) {
-    //         $query->whereBetween('start_date', [$start_date, $end_date])
-    //             ->orWhereBetween('end_date', [$start_date, $end_date])
-    //             ->orWhere(function ($query) use ($start_date, $end_date) {
-    //                 $query->where('start_date', '<', $start_date)
-    //                     ->where('end_date', '>', $end_date);
-    //             });
-    //     })
-    //         ->get();
+        $statusKamar = [];
 
-    //     $statusKamar = [];
-    //     $jumlahKamarReady = [];
+        foreach ($bookings as $booking) {
+            $detailBookings = DetailBooking::where('invoice', $booking->invoice)->get();
+            foreach ($detailBookings as $detailBooking) {
+                if ($booking->status_booking == 'Check In' || $booking->status_booking == 'Booking') {
+                    $statusKamar[$detailBooking->no_kamar] = 'Booked';
+                } else {
+                    $statusKamar[$detailBooking->no_kamar] = 'Ready';
+                }
+            }
+        }
 
-    //     foreach ($bookings as $booking) {
-    //         $detailBookings = DetailBooking::where('invoice', $booking->invoice)->get();
-    //         foreach ($detailBookings as $detailBooking) {
-    //             if ($booking->status == 'check out' || $booking->status == 'cancel') {
-    //                 $statusKamar[$detailBooking->no_kamar] = 'Ready';
-    //             } else {
-    //                 $statusKamar[$detailBooking->no_kamar] = 'Booked';
-    //             }
-    //         }
-    //     }
+        // Mengambil semua kamar yang tersedia berdasarkan id_kategori
+        $kamarReady = Kamar::where('id_kategori', $id_kategori)
+            ->whereNotIn('no_kamar', array_keys($statusKamar))
+            ->get();
 
-    //     // Mengambil kamar yang berstatus "ready"
-    //     $kamarReady = Kamar::whereNotIn('no_kamar', array_keys($statusKamar))->get();
+        // Membuat array untuk menyimpan data kamar yang tersedia
+        $kamarTersedia = [];
 
-    //     return response()->json([
-    //         'status' => 'success',
-    //         'kamarReady' => $kamarReady
-    //     ]);
-    //     // return view('admin.booking-form', compact('invoice', 'id_customer', 'kamar', 'kategori', 'posts', 'statusKamar', 'jumlahKamarReady', 'kamarReady', 'start_date', 'end_date'));
-    // }
+        foreach ($kamarReady as $kamar) {
+            $kamarTersedia[$kamar->no_kamar] = $kamar->nama_kamar;
+        }
 
-    // public function getKamarByKategori(Request $request)
-    // {
-    //     $idKategori = $request->input('id_kategori');
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
-
-    //     // Retrieve booked room numbers within the specified date range
-    //     $bookedRooms = Booking::where(function ($query) use ($startDate, $endDate) {
-    //         $query->where('start_date', '<=', $endDate)
-    //             ->where('end_date', '>=', $startDate);
-    //     })
-    //         ->where('status_booking', '!=', 'Check Out')
-    //         ->where('status_booking', '!=', 'Cancel')
-    //         ->pluck('no_kamar')
-    //         ->toArray();
-
-    //     // Retrieve available rooms based on the category and exclude the booked rooms
-    //     $kamarKategori = Kamar::where('id_kategori', $idKategori)
-    //         ->whereNotIn('no_kamar', $bookedRooms)
-    //         ->get();
-
-    //     return response()->json(['status' => 'success', 'kamarReady' => $kamarKategori]);
-    // }
+        return response()->json([
+            'jumlah_kamar_ready' => count($kamarReady),
+            'kamar_tersedia' => $kamarTersedia
+        ]);
+    }
 
     public function printInvoice($invoice)
     {

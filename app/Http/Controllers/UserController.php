@@ -127,7 +127,7 @@ class UserController extends Controller
         if ($request->input('email') !== $user->email) {
             $request->validate([
                 'email' => 'required|email|unique:users,email',
-            ],[
+            ], [
                 'email.required' => 'Tidak boleh kosong',
                 'email.email' => 'Format Email Tidak Benar',
                 'email.unique' => 'Email Sudah digunakan',
@@ -137,7 +137,62 @@ class UserController extends Controller
         if ($request->input('username') !== $user->username) {
             $request->validate([
                 'username' => 'required|unique:users,username|regex:/^[A-Za-z0-9_]+$/',
-            ],[
+            ], [
+                'username.required' => 'Tidak boleh kosong',
+                'username.unique' => 'Username sudah digunakan',
+            ]);
+        }
+
+        $data = [
+            'nama' => $request->input('nama'),
+            'username' => $request->input('username'),
+            'email' => $request->input('email'),
+        ];
+
+        if ($request->hasFile('img')) {
+            $image = $request->file('img');
+            $image_ekstensi = $image->extension();
+            $image_name = date('ymhis') . "." . $image_ekstensi;
+            $image->move(public_path('foto'), $image_name);
+
+            $data_foto = User::where('id_user', $id)->first();
+            File::delete(public_path('foto') . '/' . $data_foto->img);
+
+            $data['img'] = $image_name;
+        }
+
+        User::where('id_user', $id)->update($data);
+        return redirect()->back()->with('success-profile', 'Berhasil Mengubah Data');
+    }
+
+    public function ubahProfileCust(Request $request, $id)
+    {
+        $request->validate([
+            'nama' => 'required',
+            'img' => 'mimes:jpeg,png,jpg|max:2048'
+        ], [
+            'nama.required' => 'Tidak boleh kosong',
+            'img.mimes' => 'Hanya format jpeg,png,jpg',
+            'img.max' => 'Maksimum size 2 MB',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        // Menambahkan aturan validasi untuk email dan username hanya jika ada perubahan
+        if ($request->input('email') !== $user->email) {
+            $request->validate([
+                'email' => 'required|email|unique:users,email',
+            ], [
+                'email.required' => 'Tidak boleh kosong',
+                'email.email' => 'Format Email Tidak Benar',
+                'email.unique' => 'Email Sudah digunakan',
+            ]);
+        }
+
+        if ($request->input('username') !== $user->username) {
+            $request->validate([
+                'username' => 'required|unique:users,username|regex:/^[A-Za-z0-9_]+$/',
+            ], [
                 'username.required' => 'Tidak boleh kosong',
                 'username.unique' => 'Username sudah digunakan',
             ]);

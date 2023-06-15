@@ -22,6 +22,8 @@
     <link href="{{ asset('customer/assets/css/magnific-popup.css') }}" rel="stylesheet">
     <!-- Google Fonts-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&amp;display=swap">
+
+    {{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> --}}
 </head>
 
 <body>

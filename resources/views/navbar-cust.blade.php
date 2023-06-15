@@ -31,7 +31,7 @@
                                 </div>
                             </li> --}}
                             <!-- <li class="nav-item"><a class="nav-link" href="element-accordions.html">Element</a></li> -->
-                            <li class="nav-item"><a class="nav-link" href="page-riwayat.html">Riwayat</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('cust.riwayat') }}">Riwayat</a></li>
                         </ul>
                         <ul class="nav-modules">
                             <!-- Login-->
