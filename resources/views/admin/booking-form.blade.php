@@ -232,7 +232,7 @@
                                     <input type="number" class="form-control mb-1" id="harga" name="harga"
                                         value="{{ $item->total_bayar }}" placeholder="" readonly>
                                 </div>
-                                @if ($item->status_bayar == 'DP')
+                                @if ($item->status_bayar == 'DP' && $data->status_booking !== 'New')
                                     <div class="col-6 mt-2">
                                         @php($pelunasan = $item->total_bayar * 4 - $item->total_bayar)
                                         <input type="text" class="form-control mb-2" id="status_pelunasan"

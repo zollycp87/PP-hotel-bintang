@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,10 +23,26 @@ class BookingController extends Controller
     {
         $today = Carbon::now()->toDateString();
         $posts = Booking::with('detail', 'customer', 'detailBayar')
-            ->whereDate('tanggal_pesan', $today)
+            ->where(function ($query) use ($today) {
+                $query->where(function ($query) use ($today) {
+                    $query->whereDate('tanggal_pesan', $today);
+                })->orWhere(function ($query) use ($today) {
+                    $query->whereDate('start_date', '<=', $today)
+                        ->whereDate('end_date', '>=', $today);
+                });
+            })
             ->where(function ($query) {
                 $query->where('id_user', Auth::user()->id_user)
                     ->orWhere('id_user', 'like', '%C%');
+            })
+            ->whereHas('detailBayar', function ($query) {
+                $query->where(function ($query) {
+                    $query->where('status_bayar', '!=', 'DP')
+                        ->orWhereNot(function ($query) {
+                            $query->whereNull('bukti_bayar')
+                                ->orWhere('bukti_bayar', '-');
+                        });
+                });
             })
             ->orderBy('tanggal_pesan', 'desc')
             ->get();
@@ -263,15 +280,15 @@ class BookingController extends Controller
             }
 
             // Mengambil semua data booking berdasarkan invoice
-            $bookings = Booking::where('invoice', $invoice)->first();
+            $data = Booking::where('invoice', $invoice)->first();
             $details = DetailBooking::with('kategori')
                 ->select('invoice', 'id_kategori')
                 ->selectRaw('COUNT(DISTINCT no_kamar) AS jumlah_kamar')
                 ->groupBy('invoice', 'id_kategori')
                 ->get();
 
-            return view('cust.invoice')->with([
-                'bookings' => $bookings,
+            return redirect()->route('cust.invoice', $invoice)->with([
+                'bookings' => $data,
                 'details' => $details,
                 'success' => 'Berhasil Menambahkan Pesanan'
             ]);
@@ -283,13 +300,20 @@ class BookingController extends Controller
         $bookingDate = $request->input('booking-date');
 
         $posts = Booking::with('detail', 'customer', 'detailBayar')
-        ->whereDate('tanggal_pesan', $bookingDate)
-        ->where(function ($query) {
-            $query->where('id_user', Auth::user()->id_user)
-                ->orWhere('id_user', 'like', '%C%');
-        })
-        ->orderBy('tanggal_pesan', 'desc')
-        ->get();
+            ->where(function ($query) use ($bookingDate) {
+                $query->where(function ($query) use ($bookingDate) {
+                    $query->whereDate('tanggal_pesan', $bookingDate);
+                })->orWhere(function ($query) use ($bookingDate) {
+                    $query->whereDate('start_date', '<=', $bookingDate)
+                        ->whereDate('end_date', '>=', $bookingDate);
+                });
+            })
+            ->where(function ($query) {
+                $query->where('id_user', Auth::user()->id_user)
+                    ->orWhere('id_user', 'like', '%C%');
+            })
+            ->orderBy('tanggal_pesan', 'desc')
+            ->get();
 
         $details = DetailBooking::with('kategori')
             ->select('invoice', 'id_kategori')
@@ -345,7 +369,33 @@ class BookingController extends Controller
         ]);
     }
 
-    public function printInvoice($invoice)
+    public function uploadBuktiBayar(Request $request, $id)
     {
+        // dd('HAI');
+        $request->validate([
+            'img' => 'mimes:jpeg,png,jpg|max:2048'
+        ], [
+            'img.mimes' => 'Hanya format jpeg,png,jpg',
+            'img.max' => 'Maksimum size 2 MB',
+        ]);
+
+        if ($request->hasFile('img')) {
+            $image = $request->file('img');
+            $image_ekstensi = $image->extension();
+            $image_name = date('ymhis') . "." . $image_ekstensi;
+            $image->move(public_path('foto'), $image_name);
+
+            $data_foto = DetailBayar::where('invoice', $id)
+                ->where('status_bayar', 'DP')
+                ->first();
+            File::delete(public_path('foto') . '/' . $data_foto->bukti_bayar);
+
+            $data['bukti_bayar'] = $image_name;
+        }
+
+        DetailBayar::where('invoice', $id)
+            ->where('status_bayar', 'DP')
+            ->update($data);
+        return redirect()->back()->with('success-profile', 'Berhasil Mengubah Data');
     }
 }

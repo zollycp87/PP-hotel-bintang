@@ -27,7 +27,7 @@
         </div>
     </div> --}}
     <div class="container py-3 mb-5 h-100">
-        {{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> --}}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <div class="row d-flex align-items-center h-100">
             @forelse ($posts as $item)
                 <div class="col-md-10 col-lg-8 col-xl-6 mb-4">

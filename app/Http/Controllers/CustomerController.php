@@ -17,9 +17,13 @@ class CustomerController extends Controller
     {
         $today = Carbon::now()->format('Y-m-d');
         $posts = Customer::whereHas('booking', function ($query) use ($today) {
-            $query->whereDate('start_date', '<=', $today)
-                ->whereDate('end_date', '>=', $today)
-                ->where('status_booking', 'Check In');
+            $query->where(function ($query) use ($today) {
+                $query->where('status_booking', 'Check In')
+                    ->whereDate('start_date', '<=', $today);
+            })->orWhere(function ($query) use ($today) {
+                $query->where('status_booking', 'Check Out')
+                    ->whereDate('end_date', '>=', $today);
+            });
         })->get();
         return view('admin.kelola-customer', compact('posts'));
     }
@@ -88,9 +92,13 @@ class CustomerController extends Controller
     {
         $bookingDate = $request->input('booking-date');
         $posts = Customer::whereHas('booking', function ($query) use ($bookingDate) {
-            $query->whereDate('start_date', '<=', $bookingDate)
-                ->whereDate('end_date', '>=', $bookingDate)
-                ->where('status_booking', 'Check In');
+            $query->where(function ($query) use ($bookingDate) {
+                $query->where('status_booking', 'Check In')
+                    ->whereDate('start_date', '<=', $bookingDate);
+            })->orWhere(function ($query) use ($bookingDate) {
+                $query->where('status_booking', 'Check Out')
+                    ->whereDate('end_date', '>=', $bookingDate);
+            });
         })->get();
         return view('admin.kelola-customer', compact('posts', 'bookingDate'));
     }

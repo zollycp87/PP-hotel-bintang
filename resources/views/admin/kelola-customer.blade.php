@@ -64,7 +64,7 @@
                         <th scope="col">Alamat</th>
                         <th scope="col">Nomor Telepon</th>
                         <th scope="col">Jenis Kelamin</th>
-                        <th scope="col">Status Customer</th>
+                        <th scope="col">Pemesanan</th>
                     </tr>
                 </thead>
                 <tbody>

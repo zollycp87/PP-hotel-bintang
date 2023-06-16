@@ -56,8 +56,6 @@
                         {{-- <th scope="col">Invoice</th> --}}
                         <th scope="col">Nama Customer</th>
                         <th scope="col">Tanggal Pesan</th>
-                        <th scope="col">Tanggal mulai</th>
-                        <th scope="col">Tanggal selesai</th>
                         <th scope="col">Total Bayar</th>
                         <th scope="col">Status Bayar</th>
                         <th scope="col">Status Booking</th>
@@ -72,12 +70,10 @@
                             {{-- <td>{{ substr($item->invoice, 0, 14) }}</td> --}}
                             <td>{{ $item->customer->nama }}</td>
                             <td>{{ $item->tanggal_pesan }}</td>
-                            <td>{{ $item->start_date }}</td>
-                            <td>{{ $item->end_date }}</td>
                             {{-- @dd($item->detailBayar) --}}
                             <td>
                                 @foreach ($item->detailBayar as $detailBayar)
-                                    Rp {{ number_format($detailBayar->total_bayar, 0, '.', ',') }}
+                                    Rp{{ number_format($detailBayar->total_bayar, 0, '.', ',') }}
                                 @endforeach
                             </td>
 
@@ -85,7 +81,38 @@
                                 @foreach ($item->detailBayar as $detailBayar)
                                     @if ($detailBayar->status_bayar == 'DP')
                                         <span class="badge text-bg-primary">DP</span>
+                                        @if ($detailBayar->bukti_bayar !== null && $detailBayar->bukti_bayar !== '-')
+                                            <button type="button" class="text-primary btn-details"
+                                                style="border: none; background: transparent;" data-bs-toggle="modal"
+                                                data-bs-target="#buktibayar{{ $item->invoice }}">Bukti</button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="buktibayar{{ $item->invoice }}" tabindex="-1"
+                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Bukti Bayar {{ $item->invoice }}
+                                                            </h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="mb-3 d-flex justify-content-center">
+                                                                <img src="{{ url('foto') . '/' . $detailBayar->bukti_bayar }}" alt=""
+                                                                    width="300px" height="300px">
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     @elseif ($detailBayar->status_bayar == 'Pelunasan')
+                                        <br>
                                         <span class="badge text-bg-info">Pelunasan</span>
                                     @elseif ($detailBayar->status_bayar == 'Full Payment')
                                         <span class="badge text-bg-success">Full Payment</span>
