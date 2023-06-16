@@ -30,7 +30,7 @@ class KamarController extends Controller
         foreach ($posts as $post) {
             $booking = Booking::where('start_date', '<=', $today)
                 ->where('end_date', '>=', $today)
-                ->whereIn('status_booking', ['Check In','Booking'])
+                ->whereIn('status_booking', ['Check In', 'Booking', 'New'])
                 ->whereHas('detail', function ($query) use ($post) {
                     $query->where('no_kamar', $post->no_kamar);
                 })
@@ -148,12 +148,15 @@ class KamarController extends Controller
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
 
-        $bookings = Booking::whereBetween('start_date', [$start_date, $end_date])
-            ->orWhereBetween('end_date', [$start_date, $end_date])
-            ->orWhere(function ($query) use ($start_date, $end_date) {
-                $query->where('start_date', '<', $start_date)
-                    ->where('end_date', '>', $end_date);
-            })
+        $bookings = Booking::where(function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('start_date', [$start_date, $end_date])
+                ->orWhereBetween('end_date', [$start_date, $end_date])
+                ->orWhere(function ($query) use ($start_date, $end_date) {
+                    $query->where('start_date', '<', $start_date)
+                        ->where('end_date', '>', $end_date);
+                });
+        })
+            ->whereIn('status_booking', ['Check In', 'Booking', 'New'])
             ->get();
 
         $statusKamar = [];
@@ -162,7 +165,7 @@ class KamarController extends Controller
         foreach ($bookings as $booking) {
             $detailBookings = DetailBooking::where('invoice', $booking->invoice)->get();
             foreach ($detailBookings as $detailBooking) {
-                if ($booking->status_booking == 'Check In' || $booking->status_booking == 'Booking') {
+                if ($booking->status_booking == 'Check In' || $booking->status_booking == 'Booking' || $booking->status_booking == 'New') {
                     $statusKamar[$detailBooking->no_kamar] = 'Booked';
                 } else {
                     $statusKamar[$detailBooking->no_kamar] = 'Ready';

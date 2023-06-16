@@ -10,6 +10,7 @@ use App\Models\KategoriKamar;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -38,7 +39,7 @@ class CustomerController extends Controller
     {
         $posts = Booking::with('detail', 'customer', 'detailBayar')
             ->where('id_customer', Auth::user()->id_user)
-            ->orderBy('tanggal_pesan', 'desc')
+            ->latest('invoice')
             ->get();
 
         $details = DetailBooking::with('kategori')
@@ -71,7 +72,8 @@ class CustomerController extends Controller
         $bayarLunas = DetailBayar::where('invoice', $id)
             ->where('status_bayar', 'Pelunasan')
             ->get();
-        // dd($detailBayars);
+
+        // dd($data);
         $data = Booking::with('detail', 'customer', 'detailBayar')->where('invoice', $id)->first();
         return view('cust.invoice', compact('data', 'details', 'bayarLunas', 'bayarDP'));
     }

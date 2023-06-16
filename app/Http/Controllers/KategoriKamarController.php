@@ -32,6 +32,7 @@ class KategoriKamarController extends Controller
         foreach ($kamars as $post) {
             $booking = Booking::where('start_date', '<=', $today)
                 ->where('end_date', '>=', $today)
+                ->whereIn('status_booking', ['Check In', 'Booking', 'New'])
                 ->whereHas('detail', function ($query) use ($post) {
                     $query->where('no_kamar', $post->no_kamar);
                 })

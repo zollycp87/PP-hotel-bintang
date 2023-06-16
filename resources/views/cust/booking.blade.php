@@ -38,7 +38,8 @@
                             @csrf
                             <div class="col-4" hidden>
                                 <input type="text" name="invoice" id="invoice" value="{{ $invoice }}">
-                                <input type="text" name="id_customer" id="id_customer" value="{{ Auth::user()->id_user }}">
+                                <input type="text" name="id_customer" id="id_customer"
+                                    value="{{ Auth::user()->id_user }}">
                                 <input type="text" name="status_booking" id="status_booking" value="{{ 'New' }}">
                                 <input type="text" name="status_bayar" id="status_bayar" value="{{ 'DP' }}">
                             </div>
@@ -92,7 +93,8 @@
                                             name="id_kategori" id="id_kategori">
                                             <option selected disabled value>Pilih Jenis Paket</option>
                                             @foreach ($kategori as $item)
-                                                <option value="{{ $item->id_kategori }}" data-harga="{{ $item->harga }}">
+                                                <option value="{{ $item->id_kategori }}"
+                                                    data-harga="{{ $item->harga }}">
                                                     {{ $item->nama_kategori }}</option>
                                             @endforeach
                                         </select>
@@ -177,7 +179,8 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3" type="submit">Book Now</button>
+                                    <button class="btn btn-primary w-100 py-3" type="submit" id="book-now">Book
+                                        Now</button>
                                 </div>
 
                             </div>
@@ -464,7 +467,30 @@
                 }
             });
 
+            $("#formSimpan").on("submit", function(e) {
+                e.preventDefault();
+                // var link = $(this).attr("action");
 
+                Swal.fire({
+                    title: 'Pesananmu Sudah Benar?',
+                    text: "Pastikan Dahulu Agar Tidak Ada Kesalahan dalam Pemesanan",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Lanjutkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Submit formulir
+                        Swal.fire(
+                            'Booking Success!',
+                            'Pesanananmu Berhasil Dibuat',
+                            'success'
+                        );
+                        $(this).unbind('submit').submit();
+                    }
+                })
+            });
         });
     </script>
 @endsection

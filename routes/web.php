@@ -98,6 +98,7 @@ Route::prefix('cust')->group(function () {
     Route::get('/get-harga/{idKategori}', [BookingController::class, 'getHargaCust'])->name('get.hargaCust');
     Route::get('/riwayat', [CustomerController::class, 'riwayat'])->name('cust.riwayat');
     Route::get('/invoice/{invoice}', [CustomerController::class, 'invoice'])->name('cust.invoice');
+    Route::get('/cancel/{invoice}', [BookingController::class, 'cancelBooking'])->name('cust-cancel');
     Route::put('/invoice/{invoice}', [BookingController::class, 'uploadBuktiBayar'])->name('cust-bukti-upload');
 });
 

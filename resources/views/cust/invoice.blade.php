@@ -1,20 +1,23 @@
 @extends('layouts.main-cust')
 
 @section('content')
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> --}}
     <div class="container mb-5">
         @include('komponen.pesan')
         @if ($data->status_booking == 'New')
-            <div class="col-12 d-flex justify-content-center">
+            <div class="col-12 d-flex justify-content-between">
                 <div class="col-8 bg-none mb-5" style="border: 1px solid black; padding: 10px;" role="alert">
-                    <h4 class="alert-heading">Well done!</h4>
-                    <p>Aww yeah, you successfully read this important alert message. This example text is going to run a
-                        bit
-                        longer so that you can see how spacing within an alert works with this kind of content.</p>
+                    <h4 class="alert-heading">Penting!</h4>
+                    <p>Harap segera melakukan pembayaran menggunakan ATM BCA dengan nomor rekening acak berikut:</p>
+                    <p><strong>Nomor Rekening: 1234-5678-9012</strong></p>
+                    <p>Jangan lupa mengunggah bukti pembayaran setelah melakukan transfer.</p>
+                    <p>Jika Anda melakukan pembayaran dan kemudian membatalkan, tidak akan ada pengembalian dana.</p>
                     <hr>
-                    <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.
-                    </p>
+                    <p class="mb-0">Jika ada pertanyaan atau bantuan, silakan hubungi kami.</p>
                 </div>
+                {{-- <div class="col-4">
+                    <div id="countdown"></div>
+                </div> --}}
             </div>
         @endif
         <div class="row">
@@ -162,7 +165,6 @@
                         </div>
 
                         <hr class="my-3">
-
                         <form action="{{ route('cust-bukti-upload', $data->invoice) }}" method="post" class="row g-3"
                             enctype="multipart/form-data">
                             {{-- @include('komponen.pesan') --}}
@@ -179,7 +181,9 @@
                                     <label for="img" class="form-label">Pilih Gambar</label>
                                     <input class="form-control" type="file" id="img" name="img">
                                 </div>
-                                <button type="submit" id="mainSubmitButton" class="btn btn-primary">Unggah</button>
+                                @if ($data->status_booking == 'New')
+                                    <button type="submit" id="mainSubmitButton" class="btn btn-primary">Unggah</button>
+                                @endif
                             @endforeach
                         </form>
 
@@ -187,10 +191,46 @@
                 </div><!-- end col -->
             </div>
         </div>
-    @endsection
+        @if ($data->status_booking == 'New' || $data->status_booking == 'Booking')
+            <a href="{{ route('cust-cancel', $data->invoice) }}" id="cancel"
+                class="btn btn-danger d-flex justify-content-center">Cancel Booking</a>
+        @endif
+    </div>
+@endsection
 
-    {{-- NAVBAR --}}
-    @section('navbar')
-        @include('navbar-cust')
-    @endsection
-    {{-- NAVBAR END --}}
+{{-- NAVBAR --}}
+@section('navbar')
+    @include('navbar-cust')
+@endsection
+{{-- NAVBAR END --}}
+
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            $("#cancel").on("click", function(e) {
+                e.preventDefault();
+                var link = $(this).attr("href");
+
+                Swal.fire({
+                    title: 'Yakin Akan Membatalkan Pesanan?',
+                    text: "Tidak Ada Refund Uang DP yang Sudah Dibayarkan",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Batalkan Pesanan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire(
+                            'Cancelled Order!',
+                            'Pesanananmu Berhasil Dibatalkan',
+                            'success'
+                        );
+                        // Redirect ke halaman pembatalan pesanan
+                        window.location.href = link;
+                    }
+                })
+            });
+        });
+    </script>
+@endsection

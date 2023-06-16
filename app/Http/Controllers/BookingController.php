@@ -312,6 +312,15 @@ class BookingController extends Controller
                 $query->where('id_user', Auth::user()->id_user)
                     ->orWhere('id_user', 'like', '%C%');
             })
+            ->whereHas('detailBayar', function ($query) {
+                $query->where(function ($query) {
+                    $query->where('status_bayar', '!=', 'DP')
+                        ->orWhereNot(function ($query) {
+                            $query->whereNull('bukti_bayar')
+                                ->orWhere('bukti_bayar', '-');
+                        });
+                });
+            })
             ->orderBy('tanggal_pesan', 'desc')
             ->get();
 
@@ -330,12 +339,15 @@ class BookingController extends Controller
         $end_date = $request->input('end_date');
         $id_kategori = $request->input('id_kategori');
 
-        $bookings = Booking::whereBetween('start_date', [$start_date, $end_date])
-            ->orWhereBetween('end_date', [$start_date, $end_date])
-            ->orWhere(function ($query) use ($start_date, $end_date) {
-                $query->where('start_date', '<', $start_date)
-                    ->where('end_date', '>', $end_date);
-            })
+        $bookings = Booking::where(function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('start_date', [$start_date, $end_date])
+                ->orWhereBetween('end_date', [$start_date, $end_date])
+                ->orWhere(function ($query) use ($start_date, $end_date) {
+                    $query->where('start_date', '<', $start_date)
+                        ->where('end_date', '>', $end_date);
+                });
+        })
+            ->whereIn('status_booking', ['Check In', 'Booking', 'New'])
             ->get();
 
         $statusKamar = [];
@@ -397,5 +409,15 @@ class BookingController extends Controller
             ->where('status_bayar', 'DP')
             ->update($data);
         return redirect()->back()->with('success-profile', 'Berhasil Mengubah Data');
+    }
+
+    public function cancelBooking($id)
+    {
+        $data = [
+            'status_booking' => 'Cancel',
+        ];
+        Booking::where('invoice', $id)->update($data);
+
+        return redirect()->back()->with('success', 'Berhasil Membatalkan Pesanan Sayang Sekali..');
     }
 }

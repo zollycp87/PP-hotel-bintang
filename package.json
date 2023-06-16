@@ -18,6 +18,7 @@
         "datatables.net-bs5": "^1.13.4",
         "datatables.net-dt": "^1.13.4",
         "jquery": "^3.7.0",
-        "multiple-select": "^1.6.0"
+        "multiple-select": "^1.6.0",
+        "sweetalert2": "^11.7.12"
     }
 }

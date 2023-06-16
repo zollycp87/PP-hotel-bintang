@@ -109,7 +109,6 @@
     </footer>
     <!-- End Footer-->
 
-    @yield('scripts')
     <!-- javascript files-->
     <!-- jquery-->
     <script src="{{ asset('customer/assets/js/jquery.min.js') }}"></script>
@@ -131,6 +130,10 @@
     <script src="{{ asset('customer/assets/js/jquery.countTo.js') }}"></script>
     <!-- Global - Main js-->
     <script src="{{ asset('customer/assets/js/global.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @yield('scripts')
 
 </body>
 

@@ -102,7 +102,6 @@
                         </div>
                         <div class="card-footer p-3">
                             <div class="d-flex justify-content-end">
-                                <h6 class="fw-normal mb-0 mr-3"><a href="#!">Cancel</a></h6>
                                 <h6 class="fw-normal mb-0"><a href="{{ route('cust.invoice', $item->invoice) }}">Detail</a>
                                 </h6>
                             </div>

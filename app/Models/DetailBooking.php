@@ -10,7 +10,7 @@ class DetailBooking extends Model
     use HasFactory;
 
     protected $table = 'detail_booking';
-    // public $timestamps = false;
+    public $timestamps = true;
     protected $keyType = 'string';
 
     protected $fillable = [

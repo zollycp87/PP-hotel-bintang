@@ -12,7 +12,7 @@ class Booking extends Model
 
     protected $table = 'booking';
     protected $primaryKey = 'invoice';
-    // public $timestamps = false;
+    public $timestamps = true;
     protected $keyType = 'string';
 
     protected $fillable = [
