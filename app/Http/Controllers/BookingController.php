@@ -182,6 +182,7 @@ class BookingController extends Controller
                 'tanggal_bayar' => $tanggal_pesan,
                 'total_bayar' => $request->input('harga'),
                 'status_bayar' => $request->input('status_bayar'),
+                'bukti_bayar' => '-'
             ];
 
             Customer::create($customer);
@@ -246,6 +247,7 @@ class BookingController extends Controller
                 'tanggal_bayar' => $tanggal_pesan,
                 'total_bayar' => $request->input('harga'),
                 'status_bayar' => $request->input('status_bayar'),
+                'bukti_bayar' => '-'
             ];
             // dd($booking);
 
@@ -280,11 +282,14 @@ class BookingController extends Controller
     {
         $bookingDate = $request->input('booking-date');
 
-        $posts = Booking::with('detail', 'customer')
-            ->whereDate('tanggal_pesan', $bookingDate)
-            ->where('id_user', Auth::user()->id_user)
-            ->orderBy('tanggal_pesan', 'desc')
-            ->get();
+        $posts = Booking::with('detail', 'customer', 'detailBayar')
+        ->whereDate('tanggal_pesan', $bookingDate)
+        ->where(function ($query) {
+            $query->where('id_user', Auth::user()->id_user)
+                ->orWhere('id_user', 'like', '%C%');
+        })
+        ->orderBy('tanggal_pesan', 'desc')
+        ->get();
 
         $details = DetailBooking::with('kategori')
             ->select('invoice', 'id_kategori')

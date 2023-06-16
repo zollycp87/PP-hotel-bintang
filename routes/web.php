@@ -85,14 +85,6 @@ Route::prefix('cust')->group(function () {
         return view('cust.landing-page', compact('kategoris'));
     })->name('cust.landing-page');
 
-    Route::get('/invoice', function () {
-        return view('cust.invoice');
-    })->name('cust.invoice');
-    
-    Route::get('/riwayat', function () {
-        return view('cust.riwayat');
-    })->name('cust.riwayat');
-
     Route::get('/profile', function () {
         return view('cust.profile');
     })->name('cust-profile');
@@ -104,6 +96,8 @@ Route::prefix('cust')->group(function () {
     Route::post('/get-available-rooms', [BookingController::class, 'getAvailableRooms']);
     Route::get('/booking', [BookingController::class, 'bookingCust'])->name('cust-booking');
     Route::get('/get-harga/{idKategori}', [BookingController::class, 'getHargaCust'])->name('get.hargaCust');
+    Route::get('/riwayat', [CustomerController::class, 'riwayat'])->name('cust.riwayat');
+    Route::get('/invoice/{invoice}', [CustomerController::class, 'invoice'])->name('cust.invoice');
 });
 
 //Login
