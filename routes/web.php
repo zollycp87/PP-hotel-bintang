@@ -26,8 +26,16 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('cust.landing-page');
 // });
+Route::get('/about-us', function () {
+    return view('cust.about-us');
+})->name('about-us');
+Route::get('/contact-us', function () {
+    return view('cust.contact-us');
+})->name('contact-us');
+
 Route::get('/', [CustomerController::class, 'indexCust'])->name('landing-page');
 Route::get('/kategori-list', [CustomerController::class, 'kategoriList'])->name('kategori-list');
+Route::get('/detail-kategori/{id}', [CustomerController::class, 'detailKategori'])->name('detail-kategori');
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin-dashboard');

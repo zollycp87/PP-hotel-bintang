@@ -83,9 +83,9 @@
                             <div class="col-lg-4">
                                 <article class="property-item">
                                     <div class="content-image"><img src="{{ url('foto') . '/' . $kategori->img }}"
-                                            alt="property">
+                                            alt="property" style="width: 375px; height: 300px;">
                                     </div>
-                                    <h5 class="content-title"><a href="">{{ $kategori->nama_kategori }}</a></h5>
+                                    <h5 class="content-title"><a href="{{ route('detail-kategori', $kategori->id_kategori) }}">{{ $kategori->nama_kategori }}</a></h5>
                                     <div class="content-price">Rp{{ number_format($kategori->harga_kategori, 0, '.', ',') }}
                                     </div>
                                     <span class="content-meta">{{ $kategori->deskripsi }}</span>
@@ -99,7 +99,7 @@
                 <!-- memeber-->
                 <div class="container my-lg-9 my-md-7 my-5">
                     <div class="row gx-lg-0">
-                        <div class="col-lg-6"><img src="assets/images/home/h3.jpg" alt="member"></div>
+                        <div class="col-lg-6"><img src="{{ asset('customer/assets/images/home/h3.jpg') }}" alt="member"></div>
                         <div class="col-lg-6 mn-6 bg-livender my-auto">
                             <div class="py-lg-6 px-lg-6 py-md-6 px-md-5 py-5 px-4 ml-5"><i
                                     class="mb-4 h2 display-5 fas fa-quote-left text-cornflower-blue"></i>
@@ -122,7 +122,7 @@
                                         <h1 class="mb-3 text-white">Booking Klik Dibawah Ini</h1>
                                         <div class="pt-3">
                                             <p class="px-lg-6 mb-5 text-white"></p>
-                                        </div><a class="btn btn-white text-cornflower-blue" href="login">Booking now</a>
+                                        </div><a class="btn btn-white text-cornflower-blue" href="{{ route('cust-booking') }}">Booking now</a>
                                     </div>
                                 </div>
                             </div>
@@ -139,8 +139,8 @@
                     <div class="pt-lg-5 d-flex align-items-center">
                         <div class="container mb-lg-5 ">
                             <div class="row d-flex">
-                                <div class="col-lg-6 mn-7 order-lg-1"><img
-                                        src="{{ asset('customer/assets/images/logo/logo.png') }}" alt="home">
+                                <div class="col-lg-6 mn-7 order-lg-1">
+                                    <img src="{{ asset('customer/assets/images/logo/logo.png') }}" alt="home">
                                 </div>
                                 <div class="col-lg-6 col-md-12 pb-lg-4 my-auto">
                                     <div class="mt-lg-0 mt-md-5 mt-4">
@@ -213,7 +213,7 @@
                             <div class="col-lg-4">
                                 <article class="property-item">
                                     <div class="content-image"><img src="{{ url('foto') . '/' . $kategori->img }}"
-                                            alt="property">
+                                            alt="property" style="width: 375px; height: 300px;">
                                     </div>
                                     <h5 class="content-title"><a href="">{{ $kategori->nama_kategori }}</a></h5>
                                     <div class="content-price">
@@ -230,7 +230,7 @@
                 <!-- memeber-->
                 <div class="container my-lg-9 my-md-7 my-5">
                     <div class="row gx-lg-0">
-                        <div class="col-lg-6"><img src="assets/images/home/h3.jpg" alt="member"></div>
+                        <div class="col-lg-6"><img src="{{ asset('customer/assets/images/home/h3.jpg') }}" alt="member"></div>
                         <div class="col-lg-6 mn-6 bg-livender my-auto">
                             <div class="py-lg-6 px-lg-6 py-md-6 px-md-5 py-5 px-4 ml-5"><i
                                     class="mb-4 h2 display-5 fas fa-quote-left text-cornflower-blue"></i>

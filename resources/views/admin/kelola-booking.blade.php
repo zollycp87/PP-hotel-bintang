@@ -15,38 +15,34 @@
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-between">
                 <h5 class="card-title d-flex justify-content-start">Data Booking</h5>
-                <h5 class="card-title d-flex justify-content-end">
+                <div class="d-flex align-items-center">
+                    <form action="{{ route('booking.filter') }}" method="post" class="mx-2">
+                        @csrf
+                        <div class="input-group">
+                            @if (Route::currentRouteName() == 'booking.filter')
+                                <input type="date" class="form-control @error('booking-date') is-invalid @enderror"
+                                    id="booking-date" name="booking-date" value="{{ $bookingDate }}" placeholder="">
+                                @error('booking-date')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            @else
+                                <input type="date" class="form-control @error('booking-date') is-invalid @enderror"
+                                    id="booking-date" name="booking-date"
+                                    value="{{ Carbon\Carbon::now()->format('Y-m-d') }}" placeholder="">
+                                @error('booking-date')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            @endif
+                            <button type="submit" class="btn btn-secondary"><i class="bi bi-funnel me-1"></i></button>
+                        </div>
+                    </form>
                     <a href="{{ route('booking.create') }}" type="button" class="btn btn-primary"><i
                             class="bi bi-plus me-1"></i> Tambah Data</a>
-                </h5>
-            </div>
-            @include('komponen.pesan')
-
-            <form action="{{ route('booking.filter') }}" method="post">
-                @csrf
-                <div class="row mb-3">
-                    <div class="col-4">
-                        {{-- <label for="booking-date" class="form-label">Filter Tanggal</label> --}}
-                        @if (Route::currentRouteName() == 'booking.filter')
-                            <input type="date" class="form-control mb-1 @error('booking-date') is-invalid @enderror"
-                                id="booking-date" name="booking-date" value="{{ $bookingDate }}" placeholder="">
-                            @error('booking-date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        @else
-                            <input type="date" class="form-control mb-1 @error('booking-date') is-invalid @enderror"
-                                id="booking-date" name="booking-date" value="{{ Carbon\Carbon::now()->format('Y-m-d') }}"
-                                placeholder="">
-                            @error('booking-date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        @endif
-                    </div>
-                    <div class="col-4 d-flex align-items-center">
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-funnel me-1"></i></button>
-                    </div>
                 </div>
-            </form>
+            </div>
+
+
+            @include('komponen.pesan')
 
             <!-- Bordered Table -->
             <table class="table table-bordered" id="booking">
@@ -59,7 +55,7 @@
                         <th scope="col">Total Bayar</th>
                         <th scope="col">Status Bayar</th>
                         <th scope="col">Status Booking</th>
-                        <th scope="col">Aksi</th>
+                        <th scope="col" class="noExp">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="bookingTable">
@@ -73,7 +69,8 @@
                             {{-- @dd($item->detailBayar) --}}
                             <td>
                                 @foreach ($item->detailBayar as $detailBayar)
-                                    Rp{{ number_format($detailBayar->total_bayar, 0, '.', ',') }}
+                                    Rp {{ number_format($detailBayar->total_bayar, 0, '.', ',') }}
+                                    <br>
                                 @endforeach
                             </td>
 
@@ -82,25 +79,26 @@
                                     @if ($detailBayar->status_bayar == 'DP')
                                         <span class="badge text-bg-primary">DP</span>
                                         @if ($detailBayar->bukti_bayar !== null && $detailBayar->bukti_bayar !== '-')
-                                            <button type="button" class="text-primary btn-details"
+                                            <button type="button" class="text-primary btn-details noExp"
                                                 style="border: none; background: transparent;" data-bs-toggle="modal"
                                                 data-bs-target="#buktibayar{{ $item->invoice }}">Bukti</button>
 
                                             <!-- Modal -->
-                                            <div class="modal fade" id="buktibayar{{ $item->invoice }}" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal fade noExp" id="buktibayar{{ $item->invoice }}"
+                                                tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Bukti Bayar {{ $item->invoice }}
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Bukti Bayar
+                                                                {{ $item->invoice }}
                                                             </h1>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                                 aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <div class="mb-3 d-flex justify-content-center">
-                                                                <img src="{{ url('foto') . '/' . $detailBayar->bukti_bayar }}" alt=""
-                                                                    width="300px" height="300px">
+                                                                <img src="{{ url('foto') . '/' . $detailBayar->bukti_bayar }}"
+                                                                    alt="" width="300px" height="300px">
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -134,7 +132,7 @@
                                 @endif
                             </td>
                             <td>
-                                <div class="d-flex justify-between">
+                                <div class="d-flex justify-between noExp">
                                     <button type="button" class="text-primary btn-details"
                                         style="border: none; background: transparent;" data-bs-toggle="modal"
                                         data-bs-target="#detailBooking{{ $item->invoice }}">Detail</button>
@@ -295,18 +293,44 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
-            $('#booking').DataTable();
-        });
+            $('#booking').DataTable({
+                dom: 'lBftrip',
+                buttons: {
+                    buttons: [{
+                            extend: 'copy',
+                            footer: true,
+                            className: 'btn btn-primary my-3 mr-1',
+                            exportOptions: {
+                                columns: "thead th:not(.noExp)"
+                            },
 
-        function printModalContent() {
-            var modalBodyContent = document.getElementById("modalBodyDetail").innerHTML;
-            var printWindow = window.open('', '_blank', );
-            printWindow.document.open();
-            printWindow.document.write('<html><head><title>Modal Body Content</title></head><body>');
-            printWindow.document.write(modalBodyContent);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
-        }
+                        },
+                        {
+                            extend: 'excel',
+                            className: 'btn btn-primary my-3 mr-1',
+                            footer: true,
+                            exportOptions: {
+                                columns: "thead th:not(.noExp)"
+                            },
+
+                        },
+                        {
+                            title: "Laporan Pemasukan Hotel Hari Ini",
+                            extend: 'pdf',
+                            className: 'btn btn-primary my-3 mr-1',
+                            footer: true,
+                            exportOptions: {
+                                columns: "thead th:not(.noExp)",
+                                customize: function(doc) {
+                                    doc.querySelectorAll('.noExp').forEach(function(element) {
+                                        element.parentNode.removeChild(element);
+                                    });
+                                }
+                            },
+                        },
+                    ],
+                }
+            });
+        });
     </script>
 @endsection

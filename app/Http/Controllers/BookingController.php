@@ -23,39 +23,41 @@ class BookingController extends Controller
     {
         $today = Carbon::now()->toDateString();
         $posts = Booking::with('detail', 'customer', 'detailBayar')
-            ->where(function ($query) use ($today) {
-                $query->where(function ($query) use ($today) {
-                    $query->whereDate('tanggal_pesan', $today);
-                })->orWhere(function ($query) use ($today) {
-                    $query->whereDate('start_date', '<=', $today)
-                        ->whereDate('end_date', '>=', $today);
-                });
+        ->where(function ($query) use ($today) {
+            $query->where(function ($query) use ($today) {
+                $query->whereDate('tanggal_pesan', $today);
+            })->orWhere(function ($query) use ($today) {
+                $query->whereDate('start_date', '<=', $today)
+                    ->whereDate('end_date', '>=', $today);
+            });
+        })
+        ->where(function ($query) {
+            $query->where('id_user', Auth::user()->id_user)
+                ->orWhere('id_user', 'like', '%C%');
+        })
+        ->where(function ($query) {
+            $query->where(function ($query) {
+                $query->where('status_booking', '!=', 'New')
+                    ->where('status_booking', '!=', 'Cancel');
             })
-            ->where(function ($query) {
-                $query->where('id_user', Auth::user()->id_user)
-                    ->orWhere('id_user', 'like', '%C%');
-            })
-            ->whereHas('detailBayar', function ($query) {
-                $query->where(function ($query) {
+            ->orWhere(function ($query) {
+                $query->whereHas('detailBayar', function ($query) {
                     $query->where('status_bayar', '!=', 'DP')
-                        ->orWhereNot(function ($query) {
-                            $query->whereNull('bukti_bayar')
-                                ->orWhere('bukti_bayar', '-');
+                        ->orWhere(function ($query) {
+                            $query->whereNotNull('bukti_bayar')
+                                ->where('bukti_bayar', '!=', '-');
                         });
                 });
-            })
-            ->orderBy('tanggal_pesan', 'desc')
-            ->get();
+            });
+        })
+        ->orderBy('invoice', 'desc')
+        ->get();    
 
         $details = DetailBooking::with('kategori')
             ->select('invoice', 'id_kategori')
             ->selectRaw('COUNT(DISTINCT no_kamar) AS jumlah_kamar')
             ->groupBy('invoice', 'id_kategori')
             ->get();
-        // dd($posts);
-
-        // $invoice = '';
-        // $detailBayars = DetailBayar::where('invoice',$invoice)->get();
 
         if ($posts->count() === 0) {
             $jumlahKamarReady = [];

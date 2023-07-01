@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\DetailBayar;
 use App\Models\DetailBooking;
+use App\Models\Kamar;
 use App\Models\KategoriKamar;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -56,7 +57,7 @@ class CustomerController extends Controller
         return view('cust.riwayat', compact('posts', 'details'));
     }
 
-    public function invoice($id) //Halaman riwayat
+    public function invoice($id) //Halaman invoice
     {
         $details = DetailBooking::with('kategori')
             ->where('invoice', $id)
@@ -103,5 +104,49 @@ class CustomerController extends Controller
             });
         })->get();
         return view('admin.kelola-customer', compact('posts', 'bookingDate'));
+    }
+
+    public function detailKategori($id)
+    {
+        $data = KategoriKamar::where('id_kategori', $id)->first();
+        $kamars = Kamar::with('kategori')->orderby('no_kamar', 'asc')->get();
+        $today = Carbon::now()->toDateString();
+        $statusKamar = [];
+
+        // Pengecekan jika database masih kosong
+        if ($kamars->count() === 0) {
+            return view('admin.kelola-kategori', compact('posts')); // Ganti dengan route yang sesuai
+        }
+
+        foreach ($kamars as $post) {
+            $booking = Booking::where('start_date', '<=', $today)
+                ->where('end_date', '>=', $today)
+                ->whereIn('status_booking', ['Check In', 'Booking', 'New'])
+                ->whereHas('detail', function ($query) use ($post) {
+                    $query->where('no_kamar', $post->no_kamar);
+                })
+                ->first();
+
+            if ($booking) {
+                $statusKamar[$post->no_kamar] = 'Booked';
+            } else {
+                $statusKamar[$post->no_kamar] = 'Ready';
+                if (!isset($jumlahKamarReady[$post->kategori->id_kategori])) {
+                    $jumlahKamarReady[$post->kategori->id_kategori] = 1;
+                    $kategoriKamar[] = $post->kategori->id_kategori;
+                } else {
+                    $jumlahKamarReady[$post->kategori->id_kategori]++;
+                }
+            }
+        }
+
+        // Cek kategori yang tidak memiliki kamar ready
+        $kategoriTidakReady = KategoriKamar::whereNotIn('id_kategori', $kategoriKamar)->get();
+
+        // Tambahkan kategori yang tidak memiliki kamar ready ke dalam array $jumlahKamarReady
+        foreach ($kategoriTidakReady as $kategori) {
+            $jumlahKamarReady[$kategori->id_kategori] = 0;
+        }
+        return view('cust.detail-kategori', compact('data','jumlahKamarReady'));
     }
 }
