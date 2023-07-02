@@ -20,7 +20,7 @@
                 </div>
             </div>
             <!-- properties-->
-            <div class="container my-lg-8 my-md-7 my-6">
+            <div class="container my-lg-5 my-md-7 my-6">
                 <div class="row gx-lg-5 property-block">
                     @foreach ($kategoris as $kategori)
                         <div class="col-lg-4 mb-5">
@@ -56,9 +56,11 @@
                                     <p class="px-lg-6 mb-5 text-white"></p>
                                 </div>
                                 @if (Auth::check())
-                                    <a class="btn btn-primary" href="{{ route('cust-booking') }}">Booking Now</a>
+                                    <a class="btn btn-white text-cornflower-blue" href="{{ route('cust-booking') }}">Booking
+                                        Now</a>
                                 @else
-                                    <a class="btn btn-primary" href="{{ route('login') }}">Booking Now</a>
+                                    <a class="btn btn-white text-cornflower-blue" href="{{ route('login') }}">Booking
+                                        Now</a>
                                 @endif
                             </div>
                         </div>

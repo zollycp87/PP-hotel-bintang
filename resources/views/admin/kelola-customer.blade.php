@@ -58,8 +58,6 @@
                 <thead>
                     <tr>
                         <th scope="col">No</th>
-                        <th scope="col">Id Customer</th>
-                        <th scope="col">Id User</th>
                         <th scope="col">Nama</th>
                         <th scope="col">Alamat</th>
                         <th scope="col">Nomor Telepon</th>
@@ -72,8 +70,6 @@
                     @forelse ($posts as $item)
                         <tr>
                             <th scope="row">{{ $nomor_urut++ }}</th>
-                            <td>{{ $item->id_customer }}</td>
-                            <td>{{ $item->id_user }}</td>
                             <td>{{ $item->nama }}</td>
                             <td>{{ $item->alamat }}</td>
                             <td>{{ $item->no_hp }}</td>

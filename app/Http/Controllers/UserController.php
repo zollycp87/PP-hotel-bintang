@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -165,6 +166,41 @@ class UserController extends Controller
         return redirect()->back()->with('success-profile', 'Berhasil Mengubah Data');
     }
 
+    public function editProfileCust($id)
+    {
+        $data = Customer::with('user')->where('id_customer',$id)->first();
+        return view('cust.profile', compact('data'));
+    }
+
+    public function ubahPasswordCust(Request $request, $id)
+    {
+
+        $request->validate([
+            'current-password' => 'required',
+            'new-password' => 'required|min:8',
+            'confirm-password' => 'required|same:new-password',
+        ], [
+            'current-password.required' => 'Lengkapi inputan',
+            'new-password.required' => 'Lengkapi inputan',
+            'confirm-password.required' => 'Lengkapi inputan',
+            'new-password.min' => 'Password minimum 8 karakter',
+            'confirm-password.same' => 'Password tidak sama',
+        ]);
+
+        $user = User::where('id_user', $id)->first();
+
+        // Memeriksa apakah password saat ini sesuai dengan yang diberikan
+        if (!Hash::check($request->input('current-password'), $user->password)) {
+            return redirect()->back()->with('loginError', 'Gagal! Password sekarang tidak valid');
+        }
+
+        // Memperbarui password pengguna
+        $user->password = Hash::make($request->input('new-password'));
+        $user->update();
+
+        return redirect()->back()->with('success', 'Password berhasil diperbarui.');
+    }
+
     public function ubahProfileCust(Request $request, $id)
     {
         $request->validate([
@@ -198,10 +234,17 @@ class UserController extends Controller
             ]);
         }
 
-        $data = [
+        $user = [
             'nama' => $request->input('nama'),
             'username' => $request->input('username'),
             'email' => $request->input('email'),
+        ];
+
+        $customer = [
+            'nama' => $request->input('nama'),
+            'alamat' => $request->input('alamat'),
+            'no_hp' => $request->input('no-hp'),
+            'jenis_kelamin' => $request->input('jenis_kelamin'),
         ];
 
         if ($request->hasFile('img')) {
@@ -213,10 +256,11 @@ class UserController extends Controller
             $data_foto = User::where('id_user', $id)->first();
             File::delete(public_path('foto') . '/' . $data_foto->img);
 
-            $data['img'] = $image_name;
+            $user['img'] = $image_name;
         }
 
-        User::where('id_user', $id)->update($data);
+        Customer::where('id_customer', $id)->update($customer);
+        User::where('id_user', $id)->update($user);
         return redirect()->back()->with('success-profile', 'Berhasil Mengubah Data');
     }
 

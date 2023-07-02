@@ -215,7 +215,7 @@
                                     <div class="content-image"><img src="{{ url('foto') . '/' . $kategori->img }}"
                                             alt="property" style="width: 375px; height: 300px;">
                                     </div>
-                                    <h5 class="content-title"><a href="">{{ $kategori->nama_kategori }}</a></h5>
+                                    <h5 class="content-title"><a href="{{ route('detail-kategori', $kategori->id_kategori) }}">{{ $kategori->nama_kategori }}</a></h5>
                                     <div class="content-price">
                                         Rp{{ number_format($kategori->harga_kategori, 0, '.', ',') }}
                                     </div>

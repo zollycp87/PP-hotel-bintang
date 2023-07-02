@@ -66,12 +66,6 @@ Route::prefix('admin')->group(function () {
     // END
 
     //Kelola Kamar
-    // Route::get('/kelola-kamar', function () {
-    //     return view('admin.kelola-kamar');
-    // })->name('kelola-kamar');
-    // Route::get('/kamar-form', function () {
-    //     return view('admin.kamar-form');
-    // });
     Route::resource('/kelola-kamar', KamarController::class);
     Route::post('/kelola-kamar/filter', [KamarController::class, 'filter'])->name('kelola-kamar.filter');
     // END
@@ -93,10 +87,8 @@ Route::prefix('cust')->group(function () {
         return view('cust.landing-page', compact('kategoris'));
     })->name('cust.landing-page');
 
-    Route::get('/profile', function () {
-        return view('cust.profile');
-    })->name('cust-profile');
-
+    Route::put('/password/{kelola_user}', [UserController::class, 'ubahPasswordCust'])->name('ubah-password-cust')->middleware('auth');
+    Route::get('/profile/{kelola_user}', [UserController::class, 'editProfileCust'])->name('edit-profile-cust')->middleware('auth');
     Route::put('/profile/{kelola_user}', [UserController::class, 'ubahProfileCust'])->name('ubah-profile-cust')->middleware('auth');
     
     // Route::resource('/booking', BookingController::class);

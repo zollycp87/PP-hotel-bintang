@@ -8,10 +8,12 @@ use App\Models\DetailBayar;
 use App\Models\DetailBooking;
 use App\Models\Kamar;
 use App\Models\KategoriKamar;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class CustomerController extends Controller
 {
@@ -83,12 +85,6 @@ class CustomerController extends Controller
     {
         $kategoris = KategoriKamar::get();
         return view('cust.kategori-list', compact('kategoris'));
-    }
-
-    public function editProfile($id)
-    {
-        $data = Customer::with('user')->where('id_user', $id)->first();
-        return view('cust.profilx', compact('data'));
     }
 
     public function filterCustomer(Request $request)

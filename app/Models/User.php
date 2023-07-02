@@ -82,12 +82,13 @@ class User extends Authenticatable
 
         $kode = str_replace($prefix, '', $kode);
         $kode = (int) $kode + 1;
-        $incrementKode = $kode;
+        if ($kode % 10 === 0) {
+            $prefix = substr($prefix, 0, -1); // Menghapus angka 0 di belakang prefix
+        }
+    
+        $kode += 1;
 
-        // $addNol = ($incrementKode < 10) ? '0' : '';
-
-        // $kodeBaru = $prefix . $addNol . $incrementKode;
-        $kodeBaru = $prefix . $incrementKode;
+        $kodeBaru = $prefix . $kode;
         return $kodeBaru;
     }
 }

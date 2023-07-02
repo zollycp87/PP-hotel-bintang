@@ -23,7 +23,7 @@
                                     href="#">Hai,
                                     {{ Auth::user()->nama }}</a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{{ route('cust-profile') }}">Profile</a>
+                                    <a class="dropdown-item" href="{{ route('edit-profile-cust',Auth::user()->id_user) }}">Profile</a>
                                     <form action="{{ route('logout') }}" method="post">
                                         @csrf
                                         <button type="submit" class="dropdown-item">
