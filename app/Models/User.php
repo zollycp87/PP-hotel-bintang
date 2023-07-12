@@ -61,7 +61,7 @@ class User extends Authenticatable
 
     public function booking()
     {
-        return $this->hasMany(Booking::class. 'id_customer');
+        return $this->hasMany(Booking::class . 'id_customer');
     }
 
 
@@ -71,22 +71,21 @@ class User extends Authenticatable
         if ($route === 'register') {
             $prefix = 'C';
             $kode = DB::table('users')->where('id_user', 'LIKE', $prefix . '%')->max('id_user');
-        } else if($route === 'booking.create'){
+        } else if ($route === 'booking.create') {
             $prefix = 'CU';
-            $kode = DB::table('customer')->where('id_customer', 'LIKE', $prefix . '%')->max('id_customer');
-        }
-        else {
+            $kode = DB::table('customer')
+                ->selectRaw('MAX(CAST(SUBSTRING(id_customer, 3) AS UNSIGNED)) AS max_id')
+                ->where('id_customer', 'LIKE', 'CU%')
+                ->value('max_id');
+        } else {
             $prefix = 'A';
             $kode = DB::table('users')->where('id_user', 'LIKE', $prefix . '%')->max('id_user');
         }
 
         $kode = str_replace($prefix, '', $kode);
-        $kode = (int) $kode + 1;
-        if ($kode % 10 === 0) {
-            $prefix = substr($prefix, 0, -1); // Menghapus angka 0 di belakang prefix
-        }
-    
-        $kode += 1;
+        $kode = (int) $kode; // Mengubah $kode menjadi tipe data integer
+
+        $kode += 1; // Melakukan peningkatan sebesar 1
 
         $kodeBaru = $prefix . $kode;
         return $kodeBaru;

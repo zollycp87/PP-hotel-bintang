@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\HitungController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\KategoriKamarController;
 use App\Http\Controllers\UserController;

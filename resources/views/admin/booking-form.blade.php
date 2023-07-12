@@ -10,8 +10,8 @@
                     @csrf
                     <div class="row">
                         <div class="col-4" hidden>
-                            <input type="text" name="invoice" id="invoice" value="{{ $invoice }}">
                             <input type="text" name="id_customer" id="id_customer" value="{{ $id_customer }}">
+                            <input type="text" name="invoice" id="invoice" value="{{ $invoice }}">
                             <input type="text" name="id_user" id="id_user" value="{{ Auth::user()->id_user }}">
                             <input type="text" name="status" id="status" value="{{ 'Offline' }}">
                             <input type="text" name="status_booking" id="status" value="{{ 'Booking' }}">
